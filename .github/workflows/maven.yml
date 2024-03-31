@@ -34,3 +34,4 @@ jobs:
               run: mvn -B package --file pom.xml
             - name: Execute jar file
               run: sudo kill -9 `sudo lsof -t -i:8082` & sudo java -jar /home/ubuntu/actions-runner/_work/shopipi_be_spring/shopipi_be_spring/target/shopipi_be_spring-0.0.1-SNAPSHOT.jar & # tắt cổng
+
