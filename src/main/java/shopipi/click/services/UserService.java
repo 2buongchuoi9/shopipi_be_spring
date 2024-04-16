@@ -13,6 +13,7 @@ import shopipi.click.models.response.LoginRes;
 import shopipi.click.models.response.LoginRes.TokenStore;
 import shopipi.click.repositories.UserRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
+import shopipi.click.utils.Constants;
 import shopipi.click.utils._enum.AuthTypeEnum;
 import shopipi.click.utils._enum.UserRoleEnum;
 
@@ -121,6 +122,51 @@ public class UserService {
     long total = mongoTemplate.count(query, User.class);
 
     return new PageCustom<User>(PageableExecutionUtils.getPage(list, pageable, () -> total));
+  }
+
+  public User createUserMod(String ipAddress) {
+
+    User user = userRepo.findByEmail(ipAddress + Constants.AFTER_EMAIL).orElse(
+        User.builder()
+            .name(ipAddress)
+            .password(passwordEncoder.encode(ipAddress))
+            .email(ipAddress + Constants.AFTER_EMAIL)
+            .roles(Set.of(UserRoleEnum.MOD))
+            .authType(AuthTypeEnum.LOCAL)
+            .status(true)
+            .verify(false)
+            .build());
+
+    return userRepo.save(user);
+  }
+
+  public LoginRes convertModToUser(String userModId, RegisterReq registerReq) {
+    if (userRepo.existsByEmail(registerReq.getEmail()))
+      throw new BabRequestError("user is registered");
+
+    User foundUser = userRepo.findByIdAndRolesIn(userModId, Set.of(UserRoleEnum.MOD))
+        .orElseThrow(() -> new NotFoundError("userModId", userModId));
+
+    foundUser.setEmail(registerReq.getEmail());
+    foundUser.setName(registerReq.getName());
+    foundUser.setPassword(passwordEncoder.encode(registerReq.getPassword()));
+    foundUser.setRoles(Set.of(UserRoleEnum.USER));
+
+    foundUser = userRepo.save(foundUser);
+
+    KeyPair keys = JwtService.generatorKeyPair();
+
+    TokenStore tokens = new TokenStore(jwtService.createAccessToken(foundUser.getEmail(), keys.getPrivate()),
+        jwtService.createRefreshToken(foundUser.getEmail(), keys.getPrivate()));
+
+    if (!keyTokenService.createKeyStore(
+        foundUser.getId(),
+        jwtService.getStringFromPublicKey(keys.getPublic()),
+        tokens.getRefreshToken()))
+      throw new RuntimeException("fail to create keyStore");
+
+    return new LoginRes(tokens, foundUser);
+
   }
 
 }

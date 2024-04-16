@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document
+@Document(collection = "Images")
 @Data
 @Builder
 @AllArgsConstructor

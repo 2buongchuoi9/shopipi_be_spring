@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Builder;
 import lombok.Data;
 
-@Document("Keys")
+@Document(collection = "KeyTokens")
 @Data
 @Builder
 public class KeyToken {

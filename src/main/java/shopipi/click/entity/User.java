@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,7 +19,7 @@ import shopipi.click.configs.WebMvcConfig;
 import shopipi.click.utils._enum.AuthTypeEnum;
 import shopipi.click.utils._enum.UserRoleEnum;
 
-@Document
+@Document(collection = "Users")
 @Data
 @Builder
 public class User {
@@ -30,11 +31,6 @@ public class User {
 
   @JsonIgnore
   private String password;
-
-  @CreatedDate
-  @Field("createAt")
-  @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
-  private LocalDateTime createAt;
 
   @Default
   private Boolean status = true;
@@ -50,4 +46,9 @@ public class User {
 
   @Default
   private String oAuth2Id = null;
+
+  @CreatedDate
+  @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
+  @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
+  private LocalDateTime createAt;
 }

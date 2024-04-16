@@ -15,4 +15,12 @@ public final class _enum {
     GOOGLE,
   }
 
+  public static enum ProductTypeEnum {
+    CLOTHING,
+    ELECTRONIC,
+    TECH,
+    BOOK,
+    FOOD,
+  }
+
 }

@@ -19,7 +19,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+
 // import vncafe.news.entities.KeyToken;
 // import vncafe.news.exceptions.UnauthorizeError;
 // import vncafe.news.repositories.KeyTokenRepo;
@@ -33,7 +33,6 @@ import shopipi.click.services.UserRootService;
 import shopipi.click.utils.Constants.HEADER;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private JwtService jwtService;

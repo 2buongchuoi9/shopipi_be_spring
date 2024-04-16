@@ -4,12 +4,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import shopipi.click.entity.User;
 import shopipi.click.entity.UserRoot;
 import shopipi.click.models.paramsRequest.UserParamRequest;
+import shopipi.click.models.request.RegisterReq;
+import shopipi.click.models.response.LoginRes;
 import shopipi.click.models.response.MainResponse;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.UserService;
@@ -57,8 +60,27 @@ public class UserController {
 
   @Operation(summary = "get user by id")
   @PostMapping("/{id}")
-  @PreAuthorize(HASROLE.ADMIN)
+  // @PreAuthorize(HASROLE.SHOP + " or " + HASROLE.ADMIN)
   public ResponseEntity<MainResponse<User>> getOne(@PathVariable String id) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.findUserById(id)));
+  }
+
+  @PostMapping("/convert-mod-to-user/{id}")
+  public ResponseEntity<MainResponse<LoginRes>> convertModToUser(
+      HttpServletRequest req,
+      @PathVariable String id,
+      @RequestBody @Valid RegisterReq registerReq) {
+    String ipAddress = req.getHeader("X-Forwarded-For");
+    if (ipAddress == null)
+      ipAddress = req.getRemoteAddr();
+    return ResponseEntity.ok().body(MainResponse.oke(userService.convertModToUser(id, registerReq)));
+  }
+
+  @Operation(summary = "convert user to shop")
+  @PostMapping("/convert-user-to-shop/{id}")
+  @PreAuthorize(HASROLE.USER)
+  public ResponseEntity<MainResponse<User>> convertUserToShop(@PathVariable String id) {
     return ResponseEntity.ok()
         .body(MainResponse.oke(userService.findUserById(id)));
   }
