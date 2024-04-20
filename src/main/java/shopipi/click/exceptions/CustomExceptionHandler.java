@@ -39,9 +39,9 @@ public class CustomExceptionHandler {
     return new ResponseEntity<>(new MainResponse(HttpStatus.BAD_REQUEST, ex.getMessage()), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(UnAuthorizeError.class)
+  @ExceptionHandler(NoAuthorizeError.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ResponseEntity<MainResponse> handlerUnauthorizeError(UnAuthorizeError ex) {
+  public ResponseEntity<MainResponse> handlerUnauthorizeError(NoAuthorizeError ex) {
     return new ResponseEntity<>(new MainResponse(HttpStatus.UNAUTHORIZED,
         ex.getMessage()),
         HttpStatus.UNAUTHORIZED);

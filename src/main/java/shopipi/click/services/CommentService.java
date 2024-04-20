@@ -17,7 +17,7 @@ import shopipi.click.entity.Comment;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Product;
 import shopipi.click.exceptions.NotFoundError;
-import shopipi.click.exceptions.UnAuthorizeError;
+import shopipi.click.exceptions.NoAuthorizeError;
 import shopipi.click.models.paramsRequest.CommentParamsReq;
 import shopipi.click.models.request.CommentReq;
 import shopipi.click.repositories.CommentRepo;
@@ -118,7 +118,7 @@ public class CommentService {
         .orElseThrow(() -> new NotFoundError("commentId", commentId));
 
     if (!foundComment.getUser().getId().equals(user.getId()))
-      throw new UnAuthorizeError("You are not authorized to update this comment.");
+      throw new NoAuthorizeError("You are not authorized to update this comment.");
 
     foundComment.setContent(commentReq.getContent());
     return commentRepo.save(foundComment);
@@ -134,7 +134,7 @@ public class CommentService {
       if (!user.getRoles().contains(UserRoleEnum.ADMIN)
           && !user.getId().equals(comment.getShopId())
           && !comment.getUser().getId().equals(user.getId()))
-        throw new UnAuthorizeError("You are not authorized to delete this comment.");
+        throw new NoAuthorizeError("You are not authorized to delete this comment.");
 
       // xóa comment và các comment con của comment đó
       mongoTemplate.remove(Query.query(Criteria.where("left").gte(comment.getLeft()).lte(comment.getRight())),

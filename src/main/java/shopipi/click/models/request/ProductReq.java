@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,11 +42,11 @@ public class ProductReq {
   @Default
   private List<String> images = new ArrayList<String>();
 
-  @NotEmpty(message = "price is required")
+  @NotNull(message = "price is required")
   @Min(value = 0, message = "price must be greater than 0")
   private Double price;
 
-  @NotEmpty(message = "priceImport is required")
+  @NotNull(message = "priceImport is required")
   @Min(value = 0, message = "priceImport must be greater than 0")
   private Double priceImport;
 
