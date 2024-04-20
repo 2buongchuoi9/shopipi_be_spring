@@ -6,7 +6,7 @@ import shopipi.click.entity.User;
 import shopipi.click.exceptions.BabRequestError;
 import shopipi.click.exceptions.DuplicateRecordError;
 import shopipi.click.exceptions.NotFoundError;
-import shopipi.click.models.paramsRequest.UserParamRequest;
+import shopipi.click.models.paramsRequest.UserParamReq;
 import shopipi.click.models.request.LoginReq;
 import shopipi.click.models.request.RegisterReq;
 import shopipi.click.models.response.LoginRes;
@@ -24,16 +24,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
-
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class UserService {
   final private UserRepo userRepo;
   private final PasswordEncoder passwordEncoder;
@@ -92,7 +88,7 @@ public class UserService {
     return userRepo.findById(id).orElseThrow(() -> new NotFoundError("user not found"));
   }
 
-  public PageCustom<User> findAll(Pageable pageable, UserParamRequest paramRequest) {
+  public PageCustom<User> findAll(Pageable pageable, UserParamReq paramRequest) {
     String keySearch = paramRequest.getKeySearch();
     Boolean status = paramRequest.getStatus();
     Boolean verify = paramRequest.getVerify();
@@ -167,6 +163,15 @@ public class UserService {
 
     return new LoginRes(tokens, foundUser);
 
+  }
+
+  public User convertUserToShop(String userId) {
+    User foundUser = userRepo.findByIdAndRolesIn(userId, Set.of(UserRoleEnum.USER))
+        .orElseThrow(() -> new NotFoundError("userId", userId));
+
+    // add role shop
+    foundUser.addRole(UserRoleEnum.SHOP);
+    return userRepo.save(foundUser);
   }
 
 }

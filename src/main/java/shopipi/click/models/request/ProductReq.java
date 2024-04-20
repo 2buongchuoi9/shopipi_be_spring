@@ -53,7 +53,9 @@ public class ProductReq {
   private String type; // ProductTypeEnum.ELECTRONIC.name()
 
   private String description;
-  // private List<Category> categories;
+
+  @NotEmpty(message = "category is required")
+  private String categoryId;
 
   @Default
   private Boolean status = true;

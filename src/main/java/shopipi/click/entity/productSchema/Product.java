@@ -2,7 +2,6 @@ package shopipi.click.entity.productSchema;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale.Category;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Builder.Default;
 import shopipi.click.configs.WebMvcConfig;
+import shopipi.click.entity.Category;
 import shopipi.click.entity.User;
 import lombok.Data;
 
@@ -36,13 +36,18 @@ public class Product {
   @Default
   private Integer quantity = 0;
   private String description;
-  private List<Category> categories;
   @Default
-  private Double ratingAvg = 4.5;
+  private Double ratingAvg = 0.0;
+  @Default
+  private long totalRating = 0;
+  @Default
+  private Long totalComment = 0l;
   @Default
   private Boolean status = true;
 
   private List<Attribute> attributes;
+
+  private Category category;
 
   @CreatedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)

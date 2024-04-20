@@ -3,6 +3,7 @@ package shopipi.click.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.productSchema.Product;
 import shopipi.click.models.request.AttributeReq;
@@ -10,6 +11,7 @@ import shopipi.click.models.request.ProductReq;
 import shopipi.click.models.response.MainResponse;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.productService.ProductService;
+import shopipi.click.utils.Constants.HASROLE;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,9 +28,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ProductController {
   final ProductService productService;
 
-  @PreAuthorize("isAuthenticated()")
+  @PreAuthorize(HASROLE.SHOP + " or " + HASROLE.ADMIN)
   @PostMapping("")
-  public ResponseEntity<MainResponse<Product>> add(@RequestBody ProductReq productReq) {
+  public ResponseEntity<MainResponse<Product>> add(@RequestBody @Valid ProductReq productReq) {
     return ResponseEntity.ok().body(MainResponse.oke(productService.addProduct(productReq)));
   }
 
@@ -42,7 +44,7 @@ public class ProductController {
   @PostMapping("/attribute/{productId}")
   public ResponseEntity<MainResponse<Product>> addAttribute(
       @PathVariable String productId,
-      @RequestBody AttributeReq attributeReq) {
+      @RequestBody @Valid AttributeReq attributeReq) {
     return ResponseEntity.ok().body(MainResponse.oke(productService.addProductAttribute(productId, attributeReq)));
   }
 

@@ -5,10 +5,15 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class UnauthorizeError extends InsufficientAuthenticationException {
+public class UnAuthorizeError extends InsufficientAuthenticationException {
   private String mes;
 
-  public UnauthorizeError(String message) {
+  public UnAuthorizeError() {
+    super("You are not authorized to access this resource.");
+    this.mes = "You are not authorized to access this resource.";
+  }
+
+  public UnAuthorizeError(String message) {
     super(message);
     this.mes = message;
   }

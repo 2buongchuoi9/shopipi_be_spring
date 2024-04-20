@@ -28,6 +28,7 @@ public class AuthController {
 
   @PostMapping("/register")
   public ResponseEntity<MainResponse<LoginRes>> register(@RequestBody @Valid RegisterReq registerReq) {
+    System.out.println("registerReq: " + registerReq.toString());
     return ResponseEntity.ok().body(MainResponse.oke(userService.registerUserLocal(registerReq)));
   }
 

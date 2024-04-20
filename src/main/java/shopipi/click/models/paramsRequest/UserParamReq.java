@@ -10,7 +10,7 @@ import shopipi.click.utils._enum.AuthTypeEnum;
 
 @Data
 @Builder
-public class UserParamRequest {
+public class UserParamReq {
 
   private String keySearch;
   private Boolean status;

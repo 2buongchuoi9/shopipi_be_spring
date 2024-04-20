@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import shopipi.click.entity.User;
 import shopipi.click.entity.UserRoot;
-import shopipi.click.models.paramsRequest.UserParamRequest;
+import shopipi.click.models.paramsRequest.UserParamReq;
 import shopipi.click.models.request.RegisterReq;
 import shopipi.click.models.response.LoginRes;
 import shopipi.click.models.response.MainResponse;
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/user")
 @Tag(name = "User")
 public class UserController {
   private final UserService userService;
@@ -52,7 +52,7 @@ public class UserController {
   @PreAuthorize(HASROLE.ADMIN)
   public ResponseEntity<MainResponse<PageCustom<User>>> getAll(
       @PageableDefault(page = 0, size = 10, direction = Direction.ASC, sort = "id") Pageable pageable,
-      @Valid @ModelAttribute UserParamRequest userParamRequest) {
+      @Valid @ModelAttribute UserParamReq userParamRequest) {
 
     return ResponseEntity.ok()
         .body(MainResponse.oke(userService.findAll(pageable, userParamRequest)));
@@ -60,7 +60,6 @@ public class UserController {
 
   @Operation(summary = "get user by id")
   @PostMapping("/{id}")
-  // @PreAuthorize(HASROLE.SHOP + " or " + HASROLE.ADMIN)
   public ResponseEntity<MainResponse<User>> getOne(@PathVariable String id) {
     return ResponseEntity.ok()
         .body(MainResponse.oke(userService.findUserById(id)));
@@ -82,7 +81,7 @@ public class UserController {
   @PreAuthorize(HASROLE.USER)
   public ResponseEntity<MainResponse<User>> convertUserToShop(@PathVariable String id) {
     return ResponseEntity.ok()
-        .body(MainResponse.oke(userService.findUserById(id)));
+        .body(MainResponse.oke(userService.convertUserToShop(id)));
   }
 
   // @Operation(summary = "handle change password")

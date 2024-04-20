@@ -8,7 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
-import shopipi.click.exceptions.UnauthorizeError;
+import shopipi.click.exceptions.UnAuthorizeError;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -115,22 +115,22 @@ public class JwtService {
       return true;
     } catch (SignatureException ex) {
       log.error("Invalid token signature");
-      throw new UnauthorizeError("Invalid token signature");
+      throw new UnAuthorizeError("Invalid token signature");
     } catch (MalformedJwtException ex) {
       log.error("Invalid token Token");
-      throw new UnauthorizeError("Invalid token Token");
+      throw new UnAuthorizeError("Invalid token Token");
     } catch (ExpiredJwtException ex) {
       log.error("token Token expired", ex);
-      throw new UnauthorizeError("token Token expired");
+      throw new UnAuthorizeError("token Token expired");
     } catch (UnsupportedJwtException ex) {
       log.error("Unsupported token Token");
-      throw new UnauthorizeError("Unsupported token Token");
+      throw new UnAuthorizeError("Unsupported token Token");
     } catch (IllegalArgumentException ex) {
       log.error("token claims String is empty");
-      throw new UnauthorizeError("token claims String is empty");
+      throw new UnAuthorizeError("token claims String is empty");
     } catch (Exception ex) {
       log.error("Unknown token error", ex);
-      throw new UnauthorizeError("Unknown token error");
+      throw new UnAuthorizeError("Unknown token error");
     }
 
   }

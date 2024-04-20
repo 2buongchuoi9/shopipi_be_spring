@@ -23,4 +23,30 @@ public final class _enum {
     FOOD,
   }
 
+  public enum StateCartEnum {
+    ACTIVE,
+    COMPLETED,
+    FAILED,
+    PENDING,
+
+  }
+
+  public enum StateOrderEnum {
+    PENDING,
+    CONFIRMED,
+    SHIPPING,
+    CANCELLED,
+    DELIVERED,
+  }
+
+  public enum TypePayment {
+    CASH,
+    MOMO,
+    CARD_BANK,
+  }
+
+  public enum TypeDiscount {
+    FIXED_AMOUNT, PERCENTAGE_AMOUNT
+  }
+
 }

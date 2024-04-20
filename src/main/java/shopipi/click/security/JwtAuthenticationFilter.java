@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 // import vncafe.news.security.UserRootService;
 // import vncafe.news.utils.Constants.HEADER;
 import shopipi.click.entity.KeyToken;
-import shopipi.click.exceptions.UnauthorizeError;
+import shopipi.click.exceptions.UnAuthorizeError;
 import shopipi.click.repositories.KeyTokenRepo;
 import shopipi.click.services.JwtService;
 import shopipi.click.services.UserRootService;
@@ -75,19 +75,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       // check x-client-id in header
       String clientId = req.getHeader(HEADER.X_CLIENT_ID);
       if (clientId == null)
-        throw new UnauthorizeError("x-client-id has must in header");
+        throw new UnAuthorizeError("x-client-id has must in header");
 
       KeyToken keyStore = keyRepo.findByUserId(clientId)
-          .orElseThrow(() -> new UnauthorizeError("invalid x-client-id in header"));
+          .orElseThrow(() -> new UnAuthorizeError("invalid x-client-id in header"));
 
       // check authorization in header
       String token = req.getHeader(HEADER.AUTHORIZATION);
       if (token == null)
-        throw new UnauthorizeError("authorization has must in header");
+        throw new UnAuthorizeError("authorization has must in header");
 
       String userEmail = jwtService.verifyToken(token, jwtService.getPublicKeyFromString(keyStore.getPublicKey()));
       if (userEmail == null)
-        throw new UnauthorizeError("decode token is fail");
+        throw new UnAuthorizeError("decode token is fail");
 
       UserDetails userDetails = userRootService.loadUserByUsername(userEmail);
 

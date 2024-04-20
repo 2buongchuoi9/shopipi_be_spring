@@ -8,10 +8,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.User;
 import shopipi.click.entity.UserRoot;
 
 @Component
+@RequiredArgsConstructor
 public class SecurityAuditorAware implements AuditorAware<User> {
 
   @SuppressWarnings("null")
@@ -21,13 +23,10 @@ public class SecurityAuditorAware implements AuditorAware<User> {
         .map(SecurityContext::getAuthentication)
         .filter(Authentication::isAuthenticated)
         .map(Authentication::getPrincipal)
+        .filter(principal -> !(principal instanceof String))
         .map(UserRoot.class::cast)
         .map(UserRoot::getUser);
 
   }
 
-  // @Bean
-  // public AuditorAware<String> auditorProvider() {
-  // return () -> Optional.ofNullable("system"); // or return null
-  // }
 }

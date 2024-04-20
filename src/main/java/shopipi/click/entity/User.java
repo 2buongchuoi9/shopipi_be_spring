@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.util.Objects;
 import java.util.Set;
 import java.time.LocalDateTime;
 
@@ -47,8 +48,33 @@ public class User {
   @Default
   private String oAuth2Id = null;
 
+  @Default
+  private String addressShipping = null;
+
   @CreatedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
   private LocalDateTime createAt;
+
+  public void addRole(UserRoleEnum role) {
+    if (this.roles == null)
+      this.roles = Set.of(UserRoleEnum.USER, role);
+    this.roles.add(role);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    User user = (User) o;
+    return Objects.equals(id, user.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
+
 }
