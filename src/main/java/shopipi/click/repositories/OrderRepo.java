@@ -12,6 +12,8 @@ import shopipi.click.entity.Order;
 
 @Repository
 public interface OrderRepo extends MongoRepository<Order, String> {
+
+  @Query("{ 'user.id' : ?0 }")
   List<Order> findByUserId(String userId);
 
   @Query("{ 'createAt' : { $gte: ?0, $lt: ?1 } }")
@@ -22,5 +24,8 @@ public interface OrderRepo extends MongoRepository<Order, String> {
     LocalDateTime endOfDay = endDate.atStartOfDay().plusDays(1).minusSeconds(1);
     return findByCreateDateBetween(startOfDay, endOfDay);
   }
+
+  @Query("{ 'user.id' : ?0, 'state' : ?1 }")
+  List<Order> findByUserIdAndState(String userId, String state);
 
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import shopipi.click.entity.Cart;
 
 @Repository
-public interface CartRepository extends MongoRepository<Cart, String> {
+public interface CartRepo extends MongoRepository<Cart, String> {
 
   Optional<Cart> findByUserId(String id);
 

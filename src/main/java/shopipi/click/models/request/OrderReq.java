@@ -16,7 +16,7 @@ public class OrderReq {
   private String address;
   @Default
   private String payment = TypePayment.CASH.name();
-  private @Valid List<ShopOrderItemsReq> items;
+  private @Valid List<ShopOrderItemsReq> shopOrderItems;
 
   @Data
   @Builder

@@ -17,14 +17,14 @@ import shopipi.click.exceptions.NotFoundError;
 import shopipi.click.models.ShopOrderItemsModel;
 import shopipi.click.models.ShopOrderItemsModel.ProductItemsModel;
 import shopipi.click.models.request.CartReq;
-import shopipi.click.repositories.CartRepository;
+import shopipi.click.repositories.CartRepo;
 import shopipi.click.repositories.DiscountRepo;
 import shopipi.click.repositories.ProductRepo;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
-  private final CartRepository cartRepo;
+  private final CartRepo cartRepo;
   private final ProductRepo productRepo;
   private final DiscountRepo discountRepo;
   private final DiscountService discountService;
@@ -115,7 +115,7 @@ public class CartService {
     cartRepo.save(cart);
   }
 
-  private ProductItemsModel checkoutProductServer(CartReq cartReq) {
+  public ProductItemsModel checkoutProductServer(CartReq cartReq) {
     // check product exist
     Product foundProduct = productRepo.findById(cartReq.getProductId())
         .orElseThrow(() -> new NotFoundError("Product not found"));
