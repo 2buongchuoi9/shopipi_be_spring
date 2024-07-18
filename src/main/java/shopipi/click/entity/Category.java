@@ -15,6 +15,8 @@ public class Category {
   @Id
   private String id;
 
+  private String slug;
+
   @NotEmpty(message = "Category name is required")
   private String name;
 

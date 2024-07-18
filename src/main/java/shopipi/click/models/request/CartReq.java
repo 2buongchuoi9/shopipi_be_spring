@@ -11,8 +11,8 @@ import lombok.Builder.Default;
 public class CartReq {
   @NotEmpty(message = "productId is required")
   private String productId;
-  @NotEmpty(message = "attributeId is required")
-  private String attributeId;
+  @NotEmpty(message = "variantId is required")
+  private String variantId;
   @NotNull(message = "quantity is required")
   private Integer quantity;
 

@@ -1,5 +1,7 @@
 package shopipi.click.entity.productSchema;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -7,26 +9,44 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public abstract class Attribute {
-  @Id
-  protected String id;
-  protected String productId;
-  protected Integer quantity;
-  // protected String type;
+public class Attribute {
+  // @Id
+  // private String id;
+  // private String productId;
+  // private Integer quantity;
+  // private String type;
+  protected String brand; // thuong hieu
+  protected String origin; // xuat xu
+  private List<ListObjectMap> listVariant; // [{key: "size", value: ["M", "L", "XL"]}, {key: "color", value: ["red",
+  // "blue"]}]
 
-  // Define a protected constructor to be used by the builder in the subclass
-  protected Attribute(String id, String productId, Integer quantity) {
-    this.id = id;
-    this.productId = productId;
-    this.quantity = quantity;
+  // Define a private constructor to be used by the builder in the subclass
+  public Attribute(String brand, String origin) {
+    this.brand = brand;
+    this.origin = origin;
   }
 
   @Data
   @Builder
   public static class AttributeBuilder {
-    protected String id;
-    protected String productId;
-    protected Integer quantity;
+    private String brand; // thuong hieu
+    private String origin; // xuat xu
+    private ListObjectMap listVariant;
+
+  }
+
+  @Data
+  @Builder
+  public static class ObjectMap {
+    private String key;
+    private String value;
+  }
+
+  @Data
+  @Builder
+  public static class ListObjectMap {
+    private String key;
+    private List<String> values;
   }
 
 }

@@ -32,6 +32,11 @@ public class AuthController {
     return ResponseEntity.ok().body(MainResponse.oke(userService.registerUserLocal(registerReq)));
   }
 
+  @PostMapping("/register-shop/{id}")
+  public ResponseEntity<MainResponse<User>> registerShop(@PathVariable String id) {
+    return ResponseEntity.ok().body(MainResponse.oke(userService.convertUserToShop(id)));
+  }
+
   @PostMapping("/login")
   public ResponseEntity<MainResponse<LoginRes>> login(@RequestBody @Valid LoginReq loginReq) {
     return ResponseEntity.ok().body(MainResponse.oke(userService.loginLocal(loginReq)));

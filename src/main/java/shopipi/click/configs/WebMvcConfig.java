@@ -26,11 +26,11 @@ public class WebMvcConfig {
         // .allowCredentials(true);
 
         registry.addMapping("/**")
-            .allowedOrigins("/*")
+            .allowedOrigins("http://localhost:5173", "http://localhost:5174", "https://shopipi.click",
+                "https://be.shopipi.click", "https://admin.shopipi.click", "https://seller.shopipi.click")
             .allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT")
             .allowedHeaders("*")
             .allowCredentials(true);
-
       }
     };
   }

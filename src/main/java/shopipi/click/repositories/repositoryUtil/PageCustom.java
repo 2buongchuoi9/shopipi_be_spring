@@ -14,6 +14,7 @@ public class PageCustom<T> {
   private int currentPage;
   private int pageSize;
   private long totalElement;
+  private boolean last;
 
   public PageCustom(PageImpl<T> pageImpl) {
     this.content = pageImpl.getContent();
@@ -21,6 +22,7 @@ public class PageCustom<T> {
     this.totalPage = pageImpl.getTotalPages();
     this.pageSize = pageImpl.getPageable().getPageSize();
     this.totalElement = pageImpl.getTotalElements();
+    this.last = pageImpl.isLast();
   }
 
   public PageCustom(Page<T> page) {
@@ -29,6 +31,7 @@ public class PageCustom<T> {
     this.totalPage = page.getTotalPages();
     this.pageSize = page.getPageable().getPageSize();
     this.totalElement = page.getTotalElements();
+    this.last = page.isLast();
   }
 
 }

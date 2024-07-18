@@ -1,9 +1,11 @@
 package shopipi.click.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,6 +17,7 @@ import lombok.Builder.Default;
 import lombok.Data;
 import shopipi.click.configs.WebMvcConfig;
 import shopipi.click.models.ShopOrderItemsModel;
+import shopipi.click.utils._enum.OrderShipping;
 import shopipi.click.utils._enum.StateOrderEnum;
 import shopipi.click.utils._enum.TypePayment;
 
@@ -26,6 +29,8 @@ public class Order {
   private String id;
   @CreatedBy
   private User user;
+  @Default
+  private String shippingType = OrderShipping.NORMAL.name();
   private String shippingAddress;
   private Double totalOrder;
   private Double totalShipping;
@@ -39,11 +44,20 @@ public class Order {
   private String payment = TypePayment.CASH.name();
   @Default
   private String state = StateOrderEnum.PENDING.name();
-  private String note;
+  private List<String> notes;
+  @CreatedDate
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
   @LastModifiedDate
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
+
+  public List<String> addNotes(String note) {
+    if (this.notes == null)
+      this.notes = new ArrayList<>();
+
+    this.notes.add(note);
+    return this.notes;
+  }
 
 }

@@ -26,7 +26,6 @@ public class SecurityAuditorAware implements AuditorAware<User> {
         .filter(principal -> !(principal instanceof String))
         .map(UserRoot.class::cast)
         .map(UserRoot::getUser);
-
   }
 
 }

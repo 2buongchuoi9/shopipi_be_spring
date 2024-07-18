@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Builder.Default;
 import shopipi.click.configs.WebMvcConfig;
+import shopipi.click.utils._enum.StateDiscount;
 import shopipi.click.utils._enum.TypeDiscount;
 
 @Document(collection = "Discounts")
@@ -37,6 +38,8 @@ public class Discount {
   @Default
   private Integer totalCount = 50; // so luong discount co the su dung
   @Default
+  private Integer currentCount = 50; // so luong discount hien tai
+  @Default
   private Double minOrderValue = null; // gia tri toi thieu de ap dung discount
   @Default
   private List<String> userUsedIds = new ArrayList<>(); // danh sach user da dung discount
@@ -44,10 +47,29 @@ public class Discount {
   private Integer countUserUseDiscount = 1; // so lan su dung cua moi user
   @Default
   private Boolean status = true;
+  @Default
+  private Boolean isDeleted = false;
+
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   private LocalDateTime dateStart;
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   private LocalDateTime dateEnd;
+
+  // Trường không lưu vào database
+  private transient String state;
+
+  public Discount setStateBasedOnDates() {
+    LocalDateTime now = LocalDateTime.now();
+    if (dateEnd != null && dateEnd.isBefore(now)) {
+      this.state = StateDiscount.EXPIRED.name();
+    } else if (dateStart != null && dateStart.isAfter(now)) {
+      this.state = StateDiscount.NOT_YET_ACTIVE.name();
+    } else {
+      this.state = StateDiscount.ACTIVE.name();
+    }
+
+    return this;
+  }
 }

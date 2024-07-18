@@ -12,6 +12,7 @@ import shopipi.click.entity.Discount;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Attribute;
 import shopipi.click.entity.productSchema.Product;
+import shopipi.click.entity.productSchema.Variant;
 import shopipi.click.exceptions.BabRequestError;
 import shopipi.click.exceptions.NotFoundError;
 import shopipi.click.models.ShopOrderItemsModel;
@@ -97,13 +98,14 @@ public class CartService {
         .orElseThrow(() -> new NotFoundError("Cart is empty"));
   }
 
-  public void removeProductItemsToCart(User user, String attributeId) {
+  // xóa sản phẩm khỏi giỏ hàng
+  public void removeProductItemsToCart(User user, String variantId) {
     Cart cart = cartRepo.findByUserId(user.getId())
         .orElseThrow(() -> new NotFoundError("Cart not found"));
 
     List<ShopOrderItemsModel> shopOrderItems = cart.getShopOrderItems();
     shopOrderItems.forEach(shopOrderItem -> {
-      shopOrderItem.getItems().removeIf(productItem -> productItem.getAttribute().getId().equals(attributeId));
+      shopOrderItem.getItems().removeIf(productItem -> productItem.getVariant().getId().equals(variantId));
     });
 
     // remove empty shopOrderItem
@@ -120,23 +122,23 @@ public class CartService {
     Product foundProduct = productRepo.findById(cartReq.getProductId())
         .orElseThrow(() -> new NotFoundError("Product not found"));
 
-    // check attribute exist
-    Attribute attribute = foundProduct.getAttributes().stream()
-        .filter(attr -> attr.getId().equals(cartReq.getAttributeId()))
+    // lấy variant từ product
+    Variant variant = foundProduct.getVariants().stream()
+        .filter(v -> v.getId().equals(cartReq.getVariantId()))
         .findFirst()
-        .orElseThrow(() -> new NotFoundError("Attribute not found"));
+        .orElseThrow(() -> new NotFoundError("variant not found"));
 
-    // check quantity
-    if (cartReq.getQuantity() > attribute.getQuantity())
+    // check quantity in inventory
+    if (cartReq.getQuantity() > variant.getQuantity())
       throw new BabRequestError("quantity's product " + foundProduct.getId() + " in inventory is "
-          + attribute.getQuantity() + " ,quantity must less than it");
+          + variant.getQuantity() + " ,quantity must less than it");
 
     // call product service to get product detail
     return ProductItemsModel.builder()
         .product(foundProduct)
-        .attribute(attribute)
+        .variant(variant)
         .quantity(cartReq.getQuantity())
-        .price(foundProduct.getPrice())
+        .price(variant.getPrice())
         .build();
   }
 
@@ -194,20 +196,23 @@ public class CartService {
   private ShopOrderItemsModel updateShopOrderItem(ShopOrderItemsModel shopOrderItem, ProductItemsModel item) {
     List<ProductItemsModel> productItems = shopOrderItem.getItems();
     Optional<ProductItemsModel> productItemOpt = productItems.stream()
-        .filter(productItem -> productItem.getAttribute().getId().equals(item.getAttribute().getId()))
+        .filter(productItem -> productItem.getVariant().getId().equals(item.getVariant().getId()))
         .findFirst();
 
     if (productItemOpt.isPresent()) {
       ProductItemsModel productItem = productItemOpt.get();
       int quantity = item.getQuantity();
-      productItems.get(productItems.indexOf(productItem)).setQuantity(quantity < 0 ? 0 : quantity);
+      productItems.get(productItems.indexOf(productItem)).setQuantity(quantity < 0
+          ? 0
+          : quantity);
     } else {
       int quantity = item.getQuantity();
       item.setQuantity(quantity < 0 ? 0 : quantity);
       productItems.add(item);
     }
     shopOrderItem.setTotal(productItems.stream()
-        .mapToDouble(productItem -> productItem.getPrice() * productItem.getQuantity())
+        .mapToDouble(productItem -> productItem.getPrice() *
+            productItem.getQuantity())
         .sum());
     return shopOrderItem;
   }

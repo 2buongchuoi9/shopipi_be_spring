@@ -18,4 +18,9 @@ public class RegisterReq {
   @NotEmpty(message = "Password is required")
   @Min(value = 3, message = "Password must be at least 3 characters")
   private String password;
+
+  @NotEmpty(message = "Address is required")
+  private String address;
+
+  private String image;
 }

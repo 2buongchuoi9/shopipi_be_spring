@@ -6,6 +6,8 @@ target/
 
 *.properties
 
+testChat/
+
 ### STS ###
 .apt_generated
 .classpath

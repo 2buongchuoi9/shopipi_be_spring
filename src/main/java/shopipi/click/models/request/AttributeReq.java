@@ -16,14 +16,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import shopipi.click.entity.productSchema.Attribute;
-import shopipi.click.entity.productSchema.ProductClothing;
-import shopipi.click.entity.productSchema.ProductElectronic;
+import shopipi.click.entity.productSchema.AttributeClothing;
+import shopipi.click.entity.productSchema.AttributeElectronic;
 import shopipi.click.utils._enum.ProductTypeEnum;
 
-@Data
+// @AttributeClothing
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+// @AttributeElectronic
 public class AttributeReq {
 
   @NotEmpty(message = "type is required")
@@ -31,8 +31,8 @@ public class AttributeReq {
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
   @JsonSubTypes({
-      @JsonSubTypes.Type(value = ProductClothing.class, name = "CLOTHING"),
-      @JsonSubTypes.Type(value = ProductElectronic.class, name = "ELECTRONIC")
+      @JsonSubTypes.Type(value = AttributeClothing.class, name = "CLOTHING"),
+      @JsonSubTypes.Type(value = AttributeElectronic.class, name = "ELECTRONIC")
   })
   private List<Attribute> attributes;
 

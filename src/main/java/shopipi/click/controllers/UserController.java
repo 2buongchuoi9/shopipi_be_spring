@@ -58,6 +58,16 @@ public class UserController {
         .body(MainResponse.oke(userService.findAll(pageable, userParamRequest)));
   }
 
+  @Operation(summary = "get all user")
+  @GetMapping("")
+  public ResponseEntity<MainResponse<PageCustom<User>>> getAllss(
+      @PageableDefault(page = 0, size = 10, direction = Direction.ASC, sort = "id") Pageable pageable,
+      @Valid @ModelAttribute UserParamReq userParamRequest) {
+
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.findAll(pageable, userParamRequest)));
+  }
+
   @Operation(summary = "get user by id")
   @PostMapping("/{id}")
   public ResponseEntity<MainResponse<User>> getOne(@PathVariable String id) {
@@ -93,5 +103,13 @@ public class UserController {
   // return ResponseEntity.ok()
   // .body(MainResponse.oke(userService.handleChangePassword(changePasswordReq)));
   // }
+
+  // shop controller
+  @Operation(summary = "get user by id")
+  @GetMapping("/{id}")
+  public ResponseEntity<MainResponse<User>> getShop(@PathVariable String id) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.findUserById(id)));
+  }
 
 }

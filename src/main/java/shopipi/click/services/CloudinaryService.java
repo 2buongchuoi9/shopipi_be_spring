@@ -47,6 +47,34 @@ public class CloudinaryService {
     }
   }
 
+  public Map uploadImage(MultipartFile multipartFile) {
+    try {
+      Map params = ObjectUtils.asMap(
+          "resource_type", "image",
+          "overwrite", true,
+          "folder", folder,
+          "secure", true);
+      Map uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), params);
+      return uploadResult;
+    } catch (IOException io) {
+      throw new NotFoundError("Image upload fail");
+    }
+  }
+
+  public Map uploadVideo(MultipartFile multipartFile) {
+    try {
+      Map params = ObjectUtils.asMap(
+          "overwrite", true,
+          "folder", folder,
+          "resource_type", "video",
+          "secure", true);
+      Map uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), params);
+      return uploadResult;
+    } catch (Exception e) {
+      throw new NotFoundError("Image upload fail");
+    }
+  }
+
   public Map uploadV2(MultipartFile multipartFile) {
     try {
       Map params = ObjectUtils.asMap(

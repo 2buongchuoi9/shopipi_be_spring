@@ -23,32 +23,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import shopipi.click.entity.productSchema.Attribute;
 import shopipi.click.entity.productSchema.Product;
-import shopipi.click.entity.productSchema.ProductClothing;
-import shopipi.click.entity.productSchema.ProductElectronic;
+import shopipi.click.entity.productSchema.Variant;
+import shopipi.click.entity.productSchema.AttributeClothing;
+import shopipi.click.entity.productSchema.AttributeElectronic;
+import shopipi.click.utils._enum.ProductState;
 import shopipi.click.utils._enum.ProductTypeEnum;
 
 @Data
+// @AttributeClothing
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+// @NoArgsConstructor
+// @AttributeElectronic
 public class ProductReq {
 
   @NotEmpty(message = "Name is required")
   private String name;
 
+  @NotEmpty(message = "slug is required")
+  private String slug;
+
   @NotEmpty(message = "thumb is required")
   private String thumb;
+
+  private String video;
 
   @Default
   private List<String> images = new ArrayList<String>();
 
-  @NotNull(message = "price is required")
-  @Min(value = 0, message = "price must be greater than 0")
-  private Double price;
+  // @NotNull(message = "price is required")
+  // @Min(value = 0, message = "price must be greater than 0")
+  // private Double price;
 
-  @NotNull(message = "priceImport is required")
-  @Min(value = 0, message = "priceImport must be greater than 0")
-  private Double priceImport;
+  // @NotNull(message = "priceImport is required")
+  // @Min(value = 0, message = "priceImport must be greater than 0")
+  // private Double priceImport;
 
   @NotEmpty(message = "type is required")
   private String type; // ProductTypeEnum.ELECTRONIC.name()
@@ -59,18 +67,23 @@ public class ProductReq {
   private String categoryId;
 
   @Default
-  private Boolean status = true;
+  private String state = ProductState.HIDDEN.name();
+  @Default
+  private Boolean isDeleted = false;
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
   @JsonSubTypes({
-      @JsonSubTypes.Type(value = ProductClothing.class, name = "CLOTHING"),
-      @JsonSubTypes.Type(value = ProductElectronic.class, name = "ELECTRONIC")
+      @JsonSubTypes.Type(value = AttributeClothing.class, name = "CLOTHING"),
+      @JsonSubTypes.Type(value = AttributeElectronic.class, name = "ELECTRONIC"),
+      @JsonSubTypes.Type(value = Attribute.class, name = "OTHER")
   })
-  private List<Attribute> attributes;
+  private Attribute attribute;
+
+  private List<Variant> variants;
 
   @JsonCreator
-  public ProductReq(@JsonProperty("attributes") List<Attribute> attributes, @JsonProperty("type") String type) {
-    this.attributes = attributes;
+  public ProductReq(@JsonProperty("attribute") Attribute attribute, @JsonProperty("type") String type) {
+    this.attribute = attribute;
     this.type = type;
   }
 

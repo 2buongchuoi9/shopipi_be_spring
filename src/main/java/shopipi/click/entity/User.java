@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -54,7 +53,7 @@ public class User {
   @CreatedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
 
   public void addRole(UserRoleEnum role) {
     if (this.roles == null)

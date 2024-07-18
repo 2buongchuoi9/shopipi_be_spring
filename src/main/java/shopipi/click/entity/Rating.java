@@ -32,10 +32,10 @@ public class Rating {
   @CreatedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
 
   @LastModifiedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
   @JsonFormat(pattern = WebMvcConfig.dateTimeFormat)
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
 }

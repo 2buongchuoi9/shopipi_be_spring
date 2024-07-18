@@ -16,7 +16,7 @@ public interface OrderRepo extends MongoRepository<Order, String> {
   @Query("{ 'user.id' : ?0 }")
   List<Order> findByUserId(String userId);
 
-  @Query("{ 'createAt' : { $gte: ?0, $lt: ?1 } }")
+  @Query("{ 'createdAt' : { $gte: ?0, $lt: ?1 } }")
   List<Order> findByCreateDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
   default List<Order> findByCreateDateBetween(LocalDate startDate, LocalDate endDate) {

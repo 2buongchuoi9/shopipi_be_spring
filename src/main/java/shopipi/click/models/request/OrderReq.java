@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Builder.Default;
+import shopipi.click.utils._enum.OrderShipping;
 import shopipi.click.utils._enum.TypePayment;
 
 @Data
@@ -15,8 +16,13 @@ public class OrderReq {
   @NotEmpty(message = "address not null")
   private String address;
   @Default
+  private String shippingType = OrderShipping.NORMAL.name();
+  @Default
   private String payment = TypePayment.CASH.name();
   private @Valid List<ShopOrderItemsReq> shopOrderItems;
+
+  @Default
+  private String note = "";
 
   @Data
   @Builder

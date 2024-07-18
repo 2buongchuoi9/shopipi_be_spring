@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.Builder.Default;
 import shopipi.click.entity.productSchema.Attribute;
 import shopipi.click.entity.productSchema.Product;
+import shopipi.click.entity.productSchema.Variant;
 
 @Data
 @Builder
@@ -25,7 +26,7 @@ public class ShopOrderItemsModel {
   @Builder
   public static class ProductItemsModel {
     private Product product;
-    private Attribute attribute;
+    private Variant variant;
     private Integer quantity;
     private Double price;
   }

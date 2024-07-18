@@ -29,18 +29,23 @@ import shopipi.click.entity.Order;
 public class VnpayService {
   private final OrderService orderService;
 
-  public String createPaymentUrl(HttpServletRequest req, Order order, String urlClient)
+  public String createPaymentUrl(HttpServletRequest req, List<Order> orders, String urlClient)
       throws UnsupportedEncodingException, JsonProcessingException {
 
     // String ckeckoutString = new ObjectMapper().writeValueAsString(checkout);
     // String encodedCheckoutString = URLEncoder.encode(ckeckoutString,
     // StandardCharsets.UTF_8.toString());
 
+    long amount = 0;
+
+    for (Order order : orders) {
+      amount += (order.getTotalCheckout() * 100l);
+    }
+
     String vnp_Version = "2.1.0";
     String vnp_Command = "pay";
     String orderType = "other";
     // long amount = Integer.parseInt(req.getParameter("amount")) * 100;
-    long amount = (long) (order.getTotalCheckout() * 100);
     String bankCode = "NCB";
     // String bankCode = req.getParameter("bankCode");
 
@@ -62,7 +67,10 @@ public class VnpayService {
 
     vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 
-    vnp_Params.put("vnp_OrderInfo", urlClient + "?orderId=" + order.getId());
+    // chú ý sửa lại phần này
+    // vnp_Params.put("vnp_OrderInfo", urlClient + "?orderId=" +
+    // orders.get(0).getId());
+    vnp_Params.put("vnp_OrderInfo", urlClient + "?orderId=" + "sdkpfjp");
     System.out.println(vnp_Params.get("vnp_OrderInfo"));
 
     vnp_Params.put("vnp_OrderType", orderType);

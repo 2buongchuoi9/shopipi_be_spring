@@ -43,7 +43,7 @@ public class CommentController {
 
   @GetMapping("")
   public ResponseEntity<MainResponse<PageCustom<Comment>>> getComments(
-      @PageableDefault(size = 100, page = 0, sort = "createAt,desc") Pageable pageable,
+      @PageableDefault(size = 100, page = 0, sort = "createdAt,desc") Pageable pageable,
       @ModelAttribute CommentParamsReq params) {
     return ResponseEntity.ok().body(MainResponse.oke(commentService.findComments(params,
         pageable)));

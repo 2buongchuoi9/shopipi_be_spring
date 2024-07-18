@@ -49,6 +49,7 @@ public class CategoryService {
     foundCate.setName(cate.getName());
     foundCate.setParentId(cate.getParentId());
     foundCate.setThumb(cate.getThumb());
+    foundCate.setSlug(cate.getSlug());
 
     if (foundCate.getParentId() == null)
       return cateRepo.save(foundCate);

@@ -4,13 +4,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -21,10 +24,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VnpayConfig {
   public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-  public static String vnp_ReturnUrl = "http://localhost:8082/api/v1/payment/payment-info";
+  public static String vnp_ReturnUrl = "http://localhost:8083/api/payment/vnPay/callback";
   public static String vnp_TmnCode = "UD5RWEFZ";
   public static String secretKey = "DIQABKAQLOMURLDDQYXFFJVFPTQQXCIA";
   public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+
+  String vnp_Version = "2.1.0";
+  String vnp_Command = "pay";
+  String orderType = "other";
 
   public static String md5(String message) {
     String digest = null;

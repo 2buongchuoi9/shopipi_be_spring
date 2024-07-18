@@ -47,6 +47,8 @@ public class UserService {
         .email(registerReq.getEmail())
         .roles(Set.of(UserRoleEnum.USER))
         .password(passwordEncoder.encode(registerReq.getPassword()))
+        .addressShipping(registerReq.getAddress())
+        .image(registerReq.getImage() != null ? registerReq.getImage() : null)
         .build());
 
     KeyPair keys = JwtService.generatorKeyPair();
