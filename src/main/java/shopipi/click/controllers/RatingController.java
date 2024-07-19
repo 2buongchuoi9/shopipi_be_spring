@@ -37,10 +37,19 @@ public class RatingController {
 
   @PreAuthorize("isAuthenticated()")
   @PostMapping("")
-  public ResponseEntity<MainResponse<Rating>> addOrUpdateRating(
+  public ResponseEntity<MainResponse<Rating>> addRating(
       @AuthenticationPrincipal UserRoot userRoot,
       @RequestBody @Valid RatingReq ratingReq) {
-    return ResponseEntity.ok().body(MainResponse.oke(ratingService.addOrUpdateRating(userRoot.getUser(), ratingReq)));
+    return ResponseEntity.ok().body(MainResponse.oke(ratingService.addRating(userRoot.getUser(), ratingReq)));
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @PostMapping("/{ratingId}")
+  public ResponseEntity<MainResponse<Rating>> updateRating(
+      @AuthenticationPrincipal UserRoot userRoot,
+      @RequestBody @Valid RatingReq ratingReq, @PathVariable String ratingId) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(ratingService.updateRating(ratingId, userRoot.getUser(), ratingReq)));
   }
 
   @PreAuthorize("isAuthenticated()")

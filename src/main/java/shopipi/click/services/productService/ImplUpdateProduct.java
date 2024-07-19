@@ -104,6 +104,7 @@ public class ImplUpdateProduct implements IUpdateProduct {
         return variantRepo.save(v);
       }).toList();
       product.setVariants(variants);
+      product.setSale(null);
       return productRepo.save(product);
     }
 
@@ -126,6 +127,7 @@ public class ImplUpdateProduct implements IUpdateProduct {
 
     // save product
     product.setVariants(variants);
+    product.setSale(sale);
     return productRepo.save(product);
   }
 

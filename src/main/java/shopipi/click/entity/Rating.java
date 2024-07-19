@@ -1,6 +1,7 @@
 package shopipi.click.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +26,10 @@ public class Rating {
   private String shopId;
 
   private int value;
+
+  private String comment;
+
+  private List<String> images;
 
   @CreatedBy
   private User user;

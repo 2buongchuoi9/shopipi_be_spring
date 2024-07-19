@@ -24,10 +24,9 @@ import shopipi.click.utils._enum.TypeDiscount;
 public class Sale {
   @Id
   private String id;
-  @NotEmpty(message = "Name is required")
   private String name;
-  @NotNull(message = "productId is required")
   private List<String> productIds;
+  private String shopId;
   @Default
   private String type = TypeDiscount.FIXED_AMOUNT.name();
   @Default
@@ -55,4 +54,11 @@ public class Sale {
 
     return this;
   }
+
+  public Sale removeProductId(String productId) {
+    if (this.productIds != null && this.productIds.contains(productId))
+      this.productIds.remove(productId);
+    return this;
+  }
+
 }

@@ -93,7 +93,7 @@ public class ProductService {
           // .quantity(variant.getQuantity())
           .price(variant.getPrice())
           .priceImport(0.0)
-          .priceSale(0.0)
+          .priceSale(variant.getPrice())
           .quantity(0)
           .build());
       return variant;

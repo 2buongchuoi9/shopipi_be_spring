@@ -14,6 +14,7 @@ import shopipi.click.entity.UserRoot;
 
 @Component
 @RequiredArgsConstructor
+
 public class SecurityAuditorAware implements AuditorAware<User> {
 
   @SuppressWarnings("null")
