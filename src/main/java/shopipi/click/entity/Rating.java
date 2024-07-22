@@ -1,6 +1,7 @@
 package shopipi.click.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -13,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import shopipi.click.configs.WebMvcConfig;
 
@@ -23,6 +25,7 @@ public class Rating {
   @Id
   private String id;
   private String productId;
+  private String variantId;
   private String shopId;
 
   private int value;
@@ -33,6 +36,15 @@ public class Rating {
 
   @CreatedBy
   private User user;
+
+  @Default
+  private Boolean isComment = false;
+
+  @Default
+  private List<String> likes = new ArrayList();
+  private Integer left;
+  private Integer right;
+  private String parentId;
 
   @CreatedDate
   @DateTimeFormat(pattern = WebMvcConfig.dateTimeFormat)
