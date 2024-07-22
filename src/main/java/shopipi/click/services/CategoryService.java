@@ -1,6 +1,7 @@
 package shopipi.click.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,73 +14,110 @@ import shopipi.click.exceptions.BabRequestError;
 import shopipi.click.exceptions.DuplicateRecordError;
 import shopipi.click.exceptions.NotFoundError;
 import shopipi.click.repositories.CategoryRepo;
+import shopipi.click.repositories.ProductRepo;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
   private final CategoryRepo cateRepo;
   private final MongoTemplate mongoTemplate;
+  private final ProductRepo productRepo;
 
-  public Category addCategory(Category cate) {
+  // [0,1,2] -> 0: parent, 1: parent of parent, 2: parent of parent of parent
+  public Category addCategory(Category cateReq) {
 
-    if (cateRepo.existsByNameAndParentId(cate.getName(), cate.getParentId()))
-      throw new DuplicateRecordError("name, parentId", cate.getName() + ", " + cate.getParentId());
+    if (cateReq.getParentIds() == null || cateReq.getParentIds().isEmpty() || cateReq.getParentIds().size() == 0)
+      return cateRepo
+          .save(Category.builder().name(cateReq.getName()).slug(cateReq.getSlug()).thumb(cateReq.getThumb()).build());
 
-    if (cate.getParentId() == null)
-      return cateRepo.save(cate);
+    if (checkCategoryExists(cateReq.getName(), cateReq.getParentIds().get(0)))
+      throw new DuplicateRecordError("name, parentId", cateReq.getName() + ", " + cateReq.getParentIds().get(0));
 
-    Category parentCate = cateRepo.findById(cate.getParentId())
-        .orElseThrow(() -> new NotFoundError("parentId", cate.getParentId()));
-
-    cate.setParentName(parentCate.getName());
+    Category cate = Category.builder().name(cateReq.getName()).slug(cateReq.getSlug()).thumb(cateReq.getThumb())
+        .parentIds(cateReq.getParentIds()).build();
     return cateRepo.save(cate);
 
   }
 
-  public Category updateCategory(String id, Category cate) {
+  // chỉ update name, thumb, slug
+  // không update parentIds
+  public Category updateCategory(String id, Category cateReq) {
+
     // check id
     Category foundCate = cateRepo.findById(id).orElseThrow(() -> new NotFoundError("id", id));
 
-    if (!cateRepo.existsById(cate.getId()))
-      throw new BabRequestError("Category does not exist");
+    if (cateReq.getParentIds() != null && cateReq.getParentIds().size() > 0
+        && checkCategoryUpdateExists(cateReq.getName(), cateReq.getParentIds().get(0), id))
+      throw new DuplicateRecordError("name, parentId", cateReq.getName() + ", " + cateReq.getParentIds().get(0));
 
-    if (cateRepo.existsByNameAndIdNot(cate.getName(), id))
-      throw new DuplicateRecordError("Category name already exists");
+    foundCate.setName(cateReq.getName());
+    foundCate.setThumb(cateReq.getThumb());
+    foundCate.setSlug(cateReq.getSlug());
+    // foundCate.setParentIds(cateReq.getParentIds());
 
-    foundCate.setName(cate.getName());
-    foundCate.setParentId(cate.getParentId());
-    foundCate.setThumb(cate.getThumb());
-    foundCate.setSlug(cate.getSlug());
+    // Get all categories that are children or descendants of the updated category
+    // List<Category> allCategories =
+    // cateRepo.findAllByParentIdsContaining(foundCate.getId());
 
-    if (foundCate.getParentId() == null)
-      return cateRepo.save(foundCate);
+    // // Update the parentIds of all affected child categories
+    // for (Category childCate : allCategories) {
+    // // Update the parentIds array of the child category
 
-    Category parentCate = cateRepo.findById(cate.getParentId())
-        .orElseThrow(() -> new NotFoundError("parentId", cate.getParentId()));
+    // List<String> updateChild = cateReq.getParentIds();
+    // updateChild.add(0, foundCate.getId());
 
-    cate.setParentName(parentCate.getName());
+    // childCate.setParentIds(updateChild);
+    // cateRepo.save(childCate);
+    // }
+
     return cateRepo.save(foundCate);
   }
 
-  public List<Category> findAll(String id, String parentId) {
-    Query query = new Query();
+  public List<Category> findAll() {
+    return cateRepo.findAll();
+  }
 
-    if (id != null && !id.isEmpty()) {
-      if (cateRepo.existsById(id) == false)
-        throw new NotFoundError("id", id);
-      query.addCriteria(Criteria.where("id").is(id));
+  public Category findBySlug() {
+    return cateRepo.findBySlug();
+  }
+
+  public Boolean deleteCategory(String id) {
+    // check if exits child category
+    Category foundCate = cateRepo.findById(id).orElseThrow(() -> new NotFoundError("id", id));
+
+    // nếu có danh mục con thì không thể xóa
+    if (cateRepo.findAllByParentIdsContaining(id).size() > 0)
+      throw new BabRequestError("category has child category, can't delete. You must delete category child first.");
+
+    // check if exits product in category
+    if (productRepo.existsByCategoryId(id))
+      throw new BabRequestError("category has product, can't delete. You must change news has category first.");
+
+    // delete category
+    cateRepo.delete(foundCate);
+
+    return true;
+  }
+
+  private boolean checkCategoryExists(String name, String parentId) {
+    List<Category> categories = cateRepo.findByName(name);
+    for (Category category : categories) {
+      if (!category.getParentIds().isEmpty() && category.getParentIds().get(0).equals(parentId)) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    if (parentId != null && !parentId.isEmpty()) {
-      if (!parentId.equals("null") && cateRepo.existsByParentId(parentId) == false)
-        throw new NotFoundError("parentId", parentId);
-      query.addCriteria(
-          parentId.equals("null")
-              ? new Criteria().orOperator(Criteria.where("parentId").exists(false), Criteria.where("parentId").is(null))
-              : Criteria.where("parentId").is(parentId));
+  private boolean checkCategoryUpdateExists(String name, String parentId, String id) {
+    List<Category> categories = cateRepo.findByName(name);
+    for (Category category : categories) {
+      if (!category.getParentIds().isEmpty() && category.getParentIds().get(0).equals(parentId)
+          && !category.getId().equals(id)) {
+        return true;
+      }
     }
-
-    return mongoTemplate.find(query, Category.class);
+    return false;
   }
 
 }

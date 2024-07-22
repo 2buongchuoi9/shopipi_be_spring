@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,10 +42,20 @@ public class CategoryController {
 
   @Operation(summary = "get all category")
   @GetMapping("")
-  public ResponseEntity<MainResponse<List<Category>>> findAll(
-      @RequestParam(required = false) String id,
-      @RequestParam(required = false) String parentId) {
-    return ResponseEntity.ok().body(MainResponse.oke(cateService.findAll(id, parentId)));
+  public ResponseEntity<MainResponse<List<Category>>> findAll() {
+    return ResponseEntity.ok().body(MainResponse.oke(cateService.findAll()));
+  }
+
+  @Operation(summary = "get all category")
+  @GetMapping("/{slug}")
+  public ResponseEntity<MainResponse<Category>> findBySug(@PathVariable String slug) {
+    return ResponseEntity.ok().body(MainResponse.oke(cateService.findBySlug()));
+  }
+
+  @Operation(summary = "get all category")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<MainResponse<Boolean>> delete(@PathVariable String id) {
+    return ResponseEntity.ok().body(MainResponse.oke(cateService.deleteCategory(id)));
   }
 
 }

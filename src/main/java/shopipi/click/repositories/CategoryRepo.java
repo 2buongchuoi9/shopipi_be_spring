@@ -10,14 +10,14 @@ import shopipi.click.entity.Category;
 
 @Repository
 public interface CategoryRepo extends MongoRepository<Category, String> {
-  boolean existsByNameAndParentId(String name, String parentId);
+  List<Category> findByName(String name);
 
   boolean existsByNameAndIdNot(String name, String id);
 
-  boolean existsByParentId(String parentId);
-
   boolean existsByName(String name);
 
-  @Query("{ $or: [ { _id: ?0 }, { parentId: ?0 } ] }")
-  List<Category> findByIdOrParentId(String categoryId);
+  Category findBySlug();
+
+  // Tìm tất cả danh mục có chứa ID cha trong danh sách parentIds
+  List<Category> findAllByParentIdsContaining(String parentId);
 }

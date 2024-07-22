@@ -96,7 +96,7 @@ public class OrderService {
 
     // Double totalShipping = orderReq.getAddress().length() <= 2 ? 0.0 :
     // orderReq.getAddress().length() * 1000.0;
-    Double totalShipping = OrderShipping.valueOf(orderReq.getShippingType()).getCost() * 1000;
+    Double totalShipping = OrderShipping.valueOf(orderReq.getShippingType()).getCost();
     Double revenue = total.get() - totalDiscount.get() + totalShipping;
     // calculate total capital
 

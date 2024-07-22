@@ -14,4 +14,6 @@ public interface ProductRepo extends MongoRepository<Product, String> {
   boolean existsByName(String name);
 
   boolean existsByNameAndIdNot(String name, String id);
+
+  boolean existsByCategoryId(String id);
 }

@@ -76,10 +76,11 @@ public final class _enum {
   }
 
   public enum OrderShipping {
-    FAST(25.0),
-    NORMAL(20.0),
-    GHTK(15.0),
-    HT(45.0);
+    FAST(25000.0),
+    NORMAL(20000.0),
+    GHTK(15000.0),
+    HT(45000.0),
+    NONE(0.0);
 
     private final Double cost;
 

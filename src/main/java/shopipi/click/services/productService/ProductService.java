@@ -171,21 +171,9 @@ public class ProductService {
     }
 
     if (categoryId != null && !categoryId.isEmpty()) {
-      if (categoryId != null && !categoryId.isEmpty()) {
-        // Tìm tất cả các Category có id hoặc parentId giống với categoryId truyền vào
-        List<Category> categories = cateRepo.findByIdOrParentId(categoryId);
 
-        categories.stream().forEach(System.out::println);
-
-        // Lấy danh sách id của các Category tìm được chuyển sang objectId
-        List<ObjectId> objectIds = categories.stream()
-            .map(Category::getId)
-            .filter(ObjectId::isValid)
-            .map(ObjectId::new)
-            .collect(Collectors.toList());
-        // Tìm tất cả các Product có categoryId nằm trong danh sách id của Category
-        query.addCriteria(Criteria.where("category.$id").in(objectIds));
-      }
+      query.addCriteria(new Criteria().orOperator(Criteria.where("category.id").is(categoryId),
+          Criteria.where("category.parentIds").in(categoryId)));
     }
 
     // get total product

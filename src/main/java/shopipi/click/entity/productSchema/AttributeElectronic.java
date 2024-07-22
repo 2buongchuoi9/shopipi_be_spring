@@ -16,12 +16,11 @@ public class AttributeElectronic extends Attribute {
   private String model;
   private String type; // loai san pham (laptop, smartphone, tablet, smartwatch, ...)
 
-  public AttributeElectronic(String brand, String origin, String manufacturer, String model, String brand2,
+  public AttributeElectronic(String brand, String origin, String manufacturer, String model,
       String type) {
     super(brand, origin);
     this.manufacturer = manufacturer;
     this.model = model;
-    brand = brand2;
     this.type = type;
   }
 
