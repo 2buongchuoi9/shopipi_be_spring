@@ -3,6 +3,7 @@ package shopipi.click.configs;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -27,12 +28,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
-    // registry.enableSimpleBroker("/topic", "/queue");
-    // registry.setApplicationDestinationPrefixes("/app");
-    // registry.setUserDestinationPrefix("/user");
 
     registry.setApplicationDestinationPrefixes("/app");
-    registry.enableSimpleBroker("/chatroom", "/user");
+    registry.enableSimpleBroker("/user", "/queue", "/message");
     registry.setUserDestinationPrefix("/user");
 
   }
@@ -67,17 +65,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // });
   }
 
-  // @Override
-  // public boolean configureMessageConverters(List<MessageConverter>
-  // messageConverters) {
-  // DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
-  // resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
-  // MappingJackson2MessageConverter converter = new
-  // MappingJackson2MessageConverter();
-  // converter.setObjectMapper(new ObjectMapper());
-  // converter.setContentTypeResolver(resolver);
-  // messageConverters.add(converter);
-  // return false;
-  // }
+  @Bean
+  public WebSocketHandler myHandler() {
+    return new MyWebSocketHandler();
+  }
 
 }
