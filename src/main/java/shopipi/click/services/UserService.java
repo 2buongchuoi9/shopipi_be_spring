@@ -99,10 +99,12 @@ public class UserService {
     Query query = new Query();
 
     if (keySearch != null && !keySearch.isEmpty()) {
-      String regexPattern = "(?i)" + keySearch.trim(); // Thêm ?i để không phân biệt chữ hoa chữ thường
+      String regexPattern = ".*" + keySearch.trim() + ".*"; // Thêm ?i để không phân biệt chữ hoa chữ thường
       query.addCriteria(new Criteria().orOperator(
-          Criteria.where("name").regex(regexPattern),
-          Criteria.where("email").regex(regexPattern)));
+          Criteria.where("name").regex(regexPattern, "i"),
+          Criteria.where("email").regex(regexPattern, "i")));
+
+      query.addCriteria(Criteria.where("roles").ne(UserRoleEnum.MOD));
     }
 
     if (status != null)
@@ -174,6 +176,10 @@ public class UserService {
     // add role shop
     foundUser.addRole(UserRoleEnum.SHOP);
     return userRepo.save(foundUser);
+  }
+
+  public User findById(String id) {
+    return userRepo.findById(id).orElseThrow(() -> new NotFoundError("user not found"));
   }
 
 }

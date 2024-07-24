@@ -60,7 +60,7 @@ public class UserController {
 
   @Operation(summary = "get all user")
   @GetMapping("")
-  public ResponseEntity<MainResponse<PageCustom<User>>> getAllss(
+  public ResponseEntity<MainResponse<PageCustom<User>>> getAlls(
       @PageableDefault(page = 0, size = 10, direction = Direction.ASC, sort = "id") Pageable pageable,
       @Valid @ModelAttribute UserParamReq userParamRequest) {
 
