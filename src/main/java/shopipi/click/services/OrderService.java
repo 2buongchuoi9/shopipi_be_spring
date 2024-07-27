@@ -136,8 +136,15 @@ public class OrderService {
           shopOrderItem.getItems().stream()
               .forEach(item -> {
                 cartService.removeProductItemsToCart(user, item.getVariant().getId());
+                // cập nhật số lượng của biến thể sản phẩm
                 item.getVariant().setQuantity(item.getVariant().getQuantity() -
                     item.getQuantity());
+
+                // cập nhật số lượng đã bán của biến thể sản phẩm
+                item.getVariant().setSold(null == item.getVariant().getSold() ? item.getQuantity()
+                    : item.getVariant().getSold() + item.getQuantity());
+
+                // lưu data
                 iUpdateProduct.inventory(item.getProduct());
               });
         });

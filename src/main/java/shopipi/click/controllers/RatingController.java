@@ -2,6 +2,7 @@ package shopipi.click.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import shopipi.click.repositories.UserRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.RatingService;
 import shopipi.click.utils.Constants.HASROLE;
+
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -53,6 +56,20 @@ public class RatingController {
   }
 
   @PreAuthorize("isAuthenticated()")
+  @PostMapping("/file")
+  public ResponseEntity<MainResponse<Rating>> addRatingWithFile(
+      @RequestParam("productId") String productId,
+      @RequestParam("variantId") String variantId,
+      @RequestParam("value") int value,
+      @RequestParam("comment") String comment,
+      @RequestParam(value = "images", required = false) List<MultipartFile> images,
+      @AuthenticationPrincipal UserRoot userRoot) {
+    return ResponseEntity.ok().body(
+        MainResponse
+            .oke(ratingService.addRatingWithFile(userRoot.getUser(), productId, variantId, value, comment, images)));
+  }
+
+  @PreAuthorize("isAuthenticated()")
   @PostMapping("/{ratingId}")
   public ResponseEntity<MainResponse<Rating>> updateRating(
       @AuthenticationPrincipal UserRoot userRoot,
@@ -79,6 +96,13 @@ public class RatingController {
     return ResponseEntity.ok().body(MainResponse.oke(
         ratingService.likeRating(userRoot.getUser(),
             ratingId)));
+  }
+
+  @GetMapping("/countRating/shop/{shopId}")
+  public ResponseEntity<MainResponse<Integer>> countRatingByShop(
+      @PathVariable String shopId) {
+
+    return ResponseEntity.ok().body(MainResponse.oke(ratingService.countRatingByShopId(shopId)));
   }
 
 }

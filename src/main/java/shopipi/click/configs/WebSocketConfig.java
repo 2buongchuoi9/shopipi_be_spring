@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.lang.Nullable;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -34,11 +36,26 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   private final JwtService jwtService;
   private final UserRootService userRootService;
 
+  @Bean
+  public ThreadPoolTaskScheduler taskScheduler() {
+    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+    taskScheduler.setPoolSize(1);
+    taskScheduler.setThreadNamePrefix("wss-heartbeat-thread-");
+    taskScheduler.initialize();
+    return taskScheduler;
+  }
+
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
 
+    ThreadPoolTaskScheduler taskScheduler = taskScheduler();
+
     registry.setApplicationDestinationPrefixes("/app");
+
     registry.enableSimpleBroker("/user", "/queue", "/message");
+    // .setHeartbeatValue(new long[] { 10000, 10000 })
+    // .setTaskScheduler(taskScheduler);
+
     registry.setUserDestinationPrefix("/user");
 
   }
@@ -48,6 +65,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry.addEndpoint("/ws")
         .setAllowedOriginPatterns("*")
         .withSockJS();
+
     // .setInterceptors(new HandshakeInterceptor() {
     // @Override
     // public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse

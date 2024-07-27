@@ -12,6 +12,7 @@ import shopipi.click.configs.WebMvcConfig;
 public class RegisterReq {
   @NotEmpty(message = "Name is required")
   private String name;
+
   @NotEmpty(message = "Email is required")
   @Pattern(regexp = WebMvcConfig.regexpEmail, message = "Invalid email format")
   private String email;

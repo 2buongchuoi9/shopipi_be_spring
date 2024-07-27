@@ -57,7 +57,7 @@ public class ChatService {
 
     long total = mongoTemplate.count(query, Chat.class);
 
-    query.with(pageable);
+    // query.with(pageable);
     List<Chat> list = mongoTemplate.find(query, Chat.class);
 
     return new PageCustom<>(PageableExecutionUtils.getPage(list, pageable, () -> total));

@@ -171,7 +171,8 @@ public class PaymentController {
     // giao dich that bai xoa order va tra lai du lieu cua product & discount
     if (resultCode != 0) {
       // orderService.removeOrderAndReturnProductQuantityBecausePaymentFail(parts[1]);
-      return ResponseEntity.ok().body(new MainResponse<>(HttpStatus.PAYMENT_REQUIRED, message));
+      return ResponseEntity.ok()
+          .body(new MainResponse<>(HttpStatus.PAYMENT_REQUIRED, message + " code: " + resultCode));
     }
     String[] parts = orderInfo.split("\\?orderId=");
 

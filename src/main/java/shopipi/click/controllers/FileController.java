@@ -68,11 +68,17 @@ public class FileController {
     return ResponseEntity.ok().body(MainResponse.oke(fileService.findAll(pageable, type)));
   }
 
-  @PreAuthorize(HASROLE.ADMIN)
+  @PreAuthorize(HASROLE.ADMIN + " or " + HASROLE.USER + " or " + HASROLE.SHOP)
   @Operation(summary = "delete image")
-  @DeleteMapping("/image/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Boolean> deleteImage(@PathVariable String id) {
     return ResponseEntity.ok().body(fileService.delete(id));
+  }
+
+  @DeleteMapping("/url")
+  public ResponseEntity<MainResponse<Boolean>> deleteByUrl(@RequestParam String url) {
+
+    return ResponseEntity.ok().body(MainResponse.oke(fileService.deleteByUrl(url)));
   }
 
 }

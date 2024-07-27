@@ -1,5 +1,11 @@
 package shopipi.click.controllers;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -10,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.Chat;
+import shopipi.click.entity.OnlineStatusUser;
 import shopipi.click.entity.User;
 import shopipi.click.entity.UserRoot;
 import shopipi.click.repositories.UserRepo;
@@ -22,6 +29,7 @@ public class SocketController {
   final SimpMessagingTemplate messagingTemplate;
   final ChatService chatService;
   final UserService userService;
+  final MongoTemplate mongoTemplate;
 
   @MessageMapping("/chat.send")
   // @SendTo("/message")
@@ -39,4 +47,22 @@ public class SocketController {
     return chat;
 
   }
+
+  @MessageMapping("/online")
+  public void handleOnlineStatus(String userId) {
+
+    mongoTemplate.upsert(new Query(Criteria.where("userId").is(userId)), new Update()
+        .set("isOnline", true)
+        .set("time", LocalDateTime.now()), OnlineStatusUser.class);
+
+  }
+
+  @MessageMapping("/offline")
+  public void handleOfflineStatus(String userId) {
+
+    mongoTemplate.upsert(new Query(Criteria.where("userId").is(userId)), new Update()
+        .set("isOnline", false)
+        .set("time", LocalDateTime.now()), OnlineStatusUser.class);
+  }
+
 }

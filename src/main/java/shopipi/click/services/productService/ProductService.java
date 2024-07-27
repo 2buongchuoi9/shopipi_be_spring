@@ -183,12 +183,22 @@ public class ProductService {
     query.with(pageable);
     List<Product> list = mongoTemplate.find(query, Product.class);
 
-    // list.forEach(v -> {
-    // mongoTemplate.remove(new
-    // Query().addCriteria(Criteria.where("productId").ne(v.getId())),
-    // Variant.class);
+    // List<Variant> variants = variantRepo.findAll();
+    // variants.forEach(v -> {
+    // v.setSold(0);
+    // variantRepo.save(v);
     // });
-    // System.out.println("ccc" + list.size());
+
+    // List<Variant> variants_ok = variantRepo.findAll();
+
+    // list.forEach(product -> {
+    // product.setVariants(
+    // variants_ok.stream().filter(v ->
+    // v.getProductId().equals(product.getId())).collect(Collectors.toList()));
+    // productRepo.save(product);
+    // });
+
+    System.out.println("ccc" + list.size());
 
     return new PageCustom<Product>(PageableExecutionUtils.getPage(list, pageable, () -> total));
   }

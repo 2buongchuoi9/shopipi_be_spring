@@ -138,7 +138,7 @@ public class CartService {
         .product(foundProduct)
         .variant(variant)
         .quantity(cartReq.getQuantity())
-        .price(variant.getPrice())
+        .price(variant.getPriceSale())
         .build();
   }
 

@@ -7,14 +7,20 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.Comment;
+import shopipi.click.entity.Image;
 import shopipi.click.entity.Rating;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Product;
@@ -33,6 +39,7 @@ public class RatingService {
   private final ProductRepo productRepo;
   private final IUpdateProduct iUpdateProduct;
   private final MongoTemplate mongoTemplate;
+  private final ImageService fileService;
 
   public Rating addRating(User user, RatingReq ratingReq) {
 
@@ -172,6 +179,65 @@ public class RatingService {
     }
 
     return ratingRepo.save(rating);
+  }
+
+  public Rating addRatingWithFile(User user, String productId, String variantId, int value, String comment,
+      List<MultipartFile> images) {
+
+    if (images == null || images.isEmpty())
+      return addRating(user,
+          RatingReq.builder()
+              .productId(productId)
+              .variantId(variantId)
+              .value(value)
+              .comment(comment)
+              .isComment(false)
+              .build());
+    else {
+      List<String> imageUrls = new ArrayList<>();
+      images.forEach(image -> {
+        // save image
+        Image file = fileService.addImageAndFile(image);
+        imageUrls.add(file.getUrl());
+      });
+
+      return addRating(user,
+          RatingReq.builder()
+              .productId(productId)
+              .variantId(variantId)
+              .value(value)
+              .comment(comment)
+              .images(imageUrls)
+              .isComment(false)
+              .build());
+    }
+  }
+
+  public Integer countRatingByShopId(String shopId) {
+    // Lookup operation to join Product collection with Rating collection
+    LookupOperation lookupOperation = LookupOperation.newLookup()
+        .from("Products") // Collection to join with
+        .localField("productId") // Field from Rating collection
+        .foreignField("id") // Field from Product collection
+        .as("productDetails"); // Alias for the joined data
+
+    // Match operation to filter results based on shopId in the joined Product data
+    MatchOperation matchOperation = Aggregation.match(Criteria.where("productDetails.shopId").is(shopId));
+
+    // Match operation to filter results based on isComment = false
+    MatchOperation matchIsComment = Aggregation.match(Criteria.where("isComment").is(false));
+
+    // Create aggregation pipeline
+    Aggregation aggregation = Aggregation.newAggregation(
+        lookupOperation,
+        matchOperation,
+        matchIsComment);
+
+    // Execute aggregation
+    AggregationResults<Object> results = mongoTemplate.aggregate(aggregation, "Ratings", Object.class);
+
+    // Return count of matching documents
+    return results.getMappedResults().size();
   }
 
 }

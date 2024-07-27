@@ -24,4 +24,8 @@ public interface UserRepo extends MongoRepository<User, String> {
   Boolean existsByEmailAndIdNot(String email, String id);
 
   Optional<User> findByIdAndRolesIn(String userModId, Set<UserRoleEnum> of);
+
+  Optional<User> findBySlug(String slug);
+
+  boolean existsBySlugAndIdNot(String slug, String id);
 }

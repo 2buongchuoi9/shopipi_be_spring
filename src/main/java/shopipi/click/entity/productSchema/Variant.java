@@ -26,4 +26,7 @@ public class Variant {
   @Default
   private Double priceImport = 0.0;
   private List<ObjectMap> valueVariant; // [{key: "size", value: "M"}, {key: "color", value: "red"}]
+
+  @Default
+  private Integer sold = 0;
 }

@@ -97,4 +97,14 @@ public class ImageService {
     file.setMimeType(mimeType);
   }
 
+  public Boolean deleteByUrl(String url) {
+    Image file = fileRepo.findByUrl(url).orElseThrow(() -> new NotFoundError("not found url=" + url));
+
+    if (file.getPublicId() != null)
+      cloudinaryService.delete(file.getPublicId());
+
+    fileRepo.delete(file);
+    return true;
+  }
+
 }
