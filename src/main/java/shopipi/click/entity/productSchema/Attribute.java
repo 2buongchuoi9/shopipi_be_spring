@@ -17,6 +17,7 @@ public class Attribute {
   // private String type;
   protected String brand; // thuong hieu
   protected String origin; // xuat xu
+  private List<ObjectMap> listAttribute; // những thông số khác của sản phẩm
   private List<ListObjectMap> listVariant; // [{key: "size", value: ["M", "L", "XL"]}, {key: "color", value: ["red",
   // "blue"]}]
 

@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import shopipi.click.configs.WebMvcConfig;
@@ -21,11 +22,14 @@ import shopipi.click.entity.Sale;
 import shopipi.click.entity.User;
 import shopipi.click.utils._enum.ProductState;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "Products")
 @CompoundIndex(name = "index_status", def = "{'status': 1}")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
   @Id
   private String id;
@@ -58,6 +62,9 @@ public class Product {
 
   private List<Variant> variants;
 
+  @Default
+  private Integer sold = 0;
+
   @DBRef
   private Category category;
 
@@ -72,6 +79,10 @@ public class Product {
 
   @CreatedBy
   private User shop;
+
+  public Product(String id) {
+    this.id = id;
+  }
 
   // public void pushAttributes(List<Attribute> attributes) {
   // // if this attributes is null, create new list

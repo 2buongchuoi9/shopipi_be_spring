@@ -26,13 +26,22 @@ public class ImplUpdateProduct implements IUpdateProduct {
   // update quantity in product and save to database
   @Override
   public Product inventory(Product product) {
-    // get all valueVariant of product and sum quantity
+
+    // lấy tất cả valueVariant của product ở database và cộng tổng quantity
     if (product.getVariants() == null)
       return product;
-    int quantity = product.getVariants().stream()
-        .mapToInt(Variant::getQuantity)
-        .sum();
+
+    List<Variant> variants = variantRepo.findByProductId(product.getId());
+
+    // cộng tổng quantity
+    int quantity = variants.stream().mapToInt(Variant::getQuantity).sum();
+    int sold = variants.stream().mapToInt(Variant::getSold).sum();
+
+    // get all valueVariant of product and sum quantity
+
+    product.setSold(sold);
     product.setQuantity(quantity);
+    product.setVariants(variants);
     return productRepo.save(product);
   }
 

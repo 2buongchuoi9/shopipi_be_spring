@@ -144,7 +144,8 @@ public class OrderService {
                 item.getVariant().setSold(null == item.getVariant().getSold() ? item.getQuantity()
                     : item.getVariant().getSold() + item.getQuantity());
 
-                // lưu data
+                // lưu data biến thể sản phẩm
+                variationRepo.save(item.getVariant());
                 iUpdateProduct.inventory(item.getProduct());
               });
         });
@@ -210,6 +211,24 @@ public class OrderService {
 
     long total = mongoTemplate.count(query, Order.class);
     List<Order> list = mongoTemplate.find(query, Order.class);
+
+    // list.forEach(v -> {
+    // v.getItems().forEach(v1 -> {
+    // v1.getItems().forEach(v2 -> {
+    // v2.getProduct().getVariants().forEach(
+    // variant -> {
+    // if (variant.getId().equals(v2.getVariant().getId())) {
+    // variant.setSold(null == v2.getVariant().getSold() ? v2.getQuantity()
+    // : v2.getVariant().getSold() + v2.getQuantity());
+    // variationRepo.save(variant);
+    // iUpdateProduct.inventory(v2.getProduct());
+    // }
+    // });
+
+    // });
+
+    // });
+    // });
 
     return new PageCustom<Order>(PageableExecutionUtils.getPage(list, pageable, () -> total));
 

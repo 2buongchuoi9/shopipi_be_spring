@@ -4,7 +4,9 @@ import java.security.KeyPair;
 import java.time.LocalDateTime;
 
 import lombok.RequiredArgsConstructor;
+import shopipi.click.applicationEvent.FollowEvent;
 import shopipi.click.entity.Image;
+import shopipi.click.entity.Notification;
 import shopipi.click.entity.OnlineStatusUser;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Product;
@@ -22,13 +24,16 @@ import shopipi.click.repositories.UserRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.utils.Constants;
 import shopipi.click.utils._enum.AuthTypeEnum;
+import shopipi.click.utils._enum.NotificationType;
 import shopipi.click.utils._enum.UserRoleEnum;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -49,6 +54,7 @@ public class UserService {
   private final JwtService jwtService;
   private final KeyTokenService keyTokenService;
   private final MongoTemplate mongoTemplate;
+  private final ApplicationEventPublisher eventPublisher;
 
   private final ImageService fileService;
 
@@ -122,6 +128,7 @@ public class UserService {
     Boolean status = paramRequest.getStatus();
     Boolean verify = paramRequest.getVerify();
     String authType = paramRequest.getAuthType();
+    String role = paramRequest.getRole();
 
     Query query = new Query();
 
@@ -142,6 +149,14 @@ public class UserService {
 
     if (authType != null)
       query.addCriteria(Criteria.where("authType").is(authType));
+
+    if (role != null && !role.isEmpty()) {
+      query.addCriteria(
+          new Criteria().andOperator(
+              Criteria.where("roles").in(UserRoleEnum.valueOf(role)),
+              Criteria.where("roles").ne(UserRoleEnum.ADMIN)));
+
+    }
 
     query.with(pageable);
 
@@ -220,6 +235,14 @@ public class UserService {
     }
 
     userRepo.save(foundShop);
+
+    eventPublisher.publishEvent(new FollowEvent(this, Notification.builder()
+        .userFrom(user)
+        .userTo(foundShop.getId())
+        .content(user.getName() + " đã theo dõi bạn")
+        .notificationType(NotificationType.NEW_FOLLOW)
+        .build()));
+
     return true;
 
   }
@@ -312,6 +335,37 @@ public class UserService {
 
   public User findUserBySlug(String slug) {
     return userRepo.findBySlug(slug).orElseThrow(() -> new NotFoundError("user not found"));
+  }
+
+  public Map<String, Long> countProductInShops(List<String> shopIds) {
+    Map<String, Long> map = new java.util.HashMap<>();
+    shopIds.forEach(v -> {
+      map.put(v, mongoTemplate.count(Query.query(Criteria.where("shop.id").is(v)), Product.class));
+    });
+
+    return map;
+  }
+
+  public Boolean changeStatus(String id) {
+    User user = userRepo.findById(id).orElseThrow(() -> new NotFoundError("user not found"));
+    user.setStatus(user.getStatus() ? false : true);
+    userRepo.save(user);
+    return true;
+  }
+
+  public PageCustom<User> findFollowUser(String id, Pageable pageable) {
+    User user = userRepo.findById(id).orElseThrow(() -> new NotFoundError("user not found"));
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("id").in(user.getFollowers()));
+
+    query.with(pageable);
+
+    List<User> list = mongoTemplate.find(query, User.class);
+    long total = mongoTemplate.count(query, User.class);
+
+    return new PageCustom<User>(PageableExecutionUtils.getPage(list, pageable, () -> total));
+
   }
 
 }

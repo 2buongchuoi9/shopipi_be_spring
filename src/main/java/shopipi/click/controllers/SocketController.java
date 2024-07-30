@@ -21,6 +21,7 @@ import shopipi.click.entity.User;
 import shopipi.click.entity.UserRoot;
 import shopipi.click.repositories.UserRepo;
 import shopipi.click.services.ChatService;
+import shopipi.click.services.NotifyService;
 import shopipi.click.services.UserService;
 
 @Controller
@@ -30,13 +31,11 @@ public class SocketController {
   final ChatService chatService;
   final UserService userService;
   final MongoTemplate mongoTemplate;
+  final NotifyService notifyService;
 
   @MessageMapping("/chat.send")
   // @SendTo("/message")
   public Chat sendMessage(@Payload Chat chat) {
-
-    // @DestinationVariable String recipientId
-
     chat = chatService.saveChat(chat);
     System.out.println("người gửi: " + chat.getSenderId() + " người nhận: " +
         chat.getReceiverId()
@@ -45,7 +44,12 @@ public class SocketController {
     messagingTemplate.convertAndSendToUser(chat.getReceiverId(), "/private", chat);
 
     return chat;
+  }
 
+  @MessageMapping("/notify.read/{id}")
+  public void readNotify(@DestinationVariable String id) {
+    System.out.print("JKIJNBKJHBKILJHBKLJb");
+    notifyService.changeNotifyStatusToRead(id);
   }
 
   @MessageMapping("/online")

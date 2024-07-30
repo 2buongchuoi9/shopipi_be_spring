@@ -1,5 +1,6 @@
 package shopipi.click.services.productService;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,15 @@ import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -192,10 +201,7 @@ public class ProductService {
     // List<Variant> variants_ok = variantRepo.findAll();
 
     // list.forEach(product -> {
-    // product.setVariants(
-    // variants_ok.stream().filter(v ->
-    // v.getProductId().equals(product.getId())).collect(Collectors.toList()));
-    // productRepo.save(product);
+    // iUpdateProduct.inventory(product);
     // });
 
     System.out.println("ccc" + list.size());
@@ -287,6 +293,26 @@ public class ProductService {
     } catch (Exception e) {
       throw new BabRequestError("Xảy ra lỗi khi xóa sản phẩm");
     }
+  }
+
+  public List<Long> countProduct(String shopId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("shop.id").is(shopId));
+    // Chỉ lấy trường 'id'
+    query.fields().include("id", "sold");
+
+    List<Product> products = mongoTemplate.find(query, Product.class);
+
+    List<String> ids = products.stream().map(Product::getId)
+        .collect(Collectors.toList());
+
+    // đếm biến thể dựa vào id sản phẩm
+    long countVariant = mongoTemplate.count(new Query().addCriteria(Criteria.where("productId").in(ids)),
+        Variant.class);
+    long countProduct = ids.size();
+    long countSold = products.stream().mapToLong(Product::getSold).sum();
+
+    return Arrays.asList(countProduct, countVariant, countSold);
   }
 
 }

@@ -25,6 +25,7 @@ import shopipi.click.services.UserService;
 import shopipi.click.utils.Constants.HASROLE;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.modelmapper.internal.util.Lists;
@@ -196,6 +197,25 @@ public class UserController {
   public ResponseEntity<MainResponse<User>> getShopBySlug(@PathVariable String slug) {
     return ResponseEntity.ok()
         .body(MainResponse.oke(userService.findUserBySlug(slug)));
+  }
+
+  @GetMapping("/many/count-product")
+  public ResponseEntity<MainResponse<Map<String, Long>>> getManyUserCountProduct(@RequestParam List<String> ids) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.countProductInShops(ids)));
+  }
+
+  @PostMapping("/change-status/{id}")
+  public ResponseEntity<MainResponse<Boolean>> changeStatus(@PathVariable String id) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.changeStatus(id)));
+  }
+
+  @GetMapping("/follow/user/{id}")
+  public ResponseEntity<MainResponse<PageCustom<User>>> isFollowUser(@PathVariable String id,
+      @PageableDefault(page = 0, size = 10) Pageable pageable) {
+    return ResponseEntity.ok()
+        .body(MainResponse.oke(userService.findFollowUser(id, pageable)));
   }
 
 }

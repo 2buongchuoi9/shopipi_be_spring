@@ -16,6 +16,8 @@ import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.productService.ProductService;
 import shopipi.click.utils.Constants.HASROLE;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +94,11 @@ public class ProductController {
   @DeleteMapping("/{id}")
   public ResponseEntity<MainResponse<Boolean>> delete(@PathVariable String id) {
     return ResponseEntity.ok().body(MainResponse.oke(productService.deleteProduct(id)));
+  }
+
+  @GetMapping("/count/{shopId}")
+  public ResponseEntity<MainResponse<List<Long>>> countProduct(@PathVariable String shopId) {
+    return ResponseEntity.ok().body(MainResponse.oke(productService.countProduct(shopId)));
   }
 
 }

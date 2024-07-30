@@ -16,6 +16,7 @@ public class UserParamReq {
   private Boolean status;
   private String authType;
   private Boolean verify;
+  private String role;
 
   @AssertTrue(message = "The authType must match the pattern")
   private boolean isValidAuthType() {

@@ -93,4 +93,8 @@ public final class _enum {
     }
   }
 
+  public enum NotificationType {
+    LIKE, COMMENT, SHARE, NEW_PRODUCT, NEW_ORDER, NEW_SHOP, NEW_USER, NEW_COMMENT, NEW_REPLY, NEW_FOLLOW, NEW_MESSAGE
+  }
+
 }
