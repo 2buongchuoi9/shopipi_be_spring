@@ -3,6 +3,7 @@ package shopipi.click.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,7 +14,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import shopipi.click.applicationEvent.LikeEvent;
 import shopipi.click.entity.Comment;
+import shopipi.click.entity.Notification;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Product;
 import shopipi.click.exceptions.NotFoundError;
@@ -26,6 +29,7 @@ import shopipi.click.repositories.UserRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.productService.IUpdateProduct;
 import shopipi.click.services.productService.ProductService;
+import shopipi.click.utils._enum.NotificationType;
 import shopipi.click.utils._enum.UserRoleEnum;
 
 @Service
@@ -35,6 +39,7 @@ public class CommentService {
   final private ProductRepo productRepo;
   final private MongoTemplate mongoTemplate;
   final private IUpdateProduct iUpdateProduct;
+  final private ApplicationEventPublisher eventPublisher;
 
   public Comment add(CommentReq commentReq) {
     Product foundProduct = productRepo.findById(commentReq.getProductId())
@@ -165,6 +170,14 @@ public class CommentService {
       comment.getLikes().remove(user.getId());
     } else {
       comment.getLikes().add(user.getId());
+
+      eventPublisher.publishEvent(new LikeEvent(this, Notification.builder()
+          .userFrom(user)
+          .userTo(comment.getUser().getId())
+          .description(comment.getProductId())
+          .content(user.getName() + " đã thích bình luận của bạn")
+          .notificationType(NotificationType.NEW_LIKE)
+          .build()));
     }
 
     return commentRepo.save(comment);

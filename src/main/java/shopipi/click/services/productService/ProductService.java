@@ -1,18 +1,23 @@
 package shopipi.click.services.productService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
@@ -34,6 +39,7 @@ import shopipi.click.entity.productSchema.Attribute.ListObjectMap;
 import shopipi.click.entity.productSchema.Attribute.ObjectMap;
 import shopipi.click.exceptions.BabRequestError;
 import shopipi.click.exceptions.NotFoundError;
+import shopipi.click.models.ProductDTO;
 import shopipi.click.models.paramsRequest.ProductParamsReq;
 import shopipi.click.models.request.AttributeReq;
 import shopipi.click.models.request.ProductReq;
@@ -167,8 +173,25 @@ public class ProductService {
   public PageCustom<Product> findProduct(Pageable pageable, ProductParamsReq params) {
     String shopId = params.getShopId();
     String categoryId = params.getCategoryId();
+    Double minPrice = params.getMinPrice();
+    Double maxPrice = params.getMaxPrice();
+    Double rate = params.getRate();
+    String keySearch = params.getKeySearch();
 
     Query query = new Query();
+
+    if (keySearch != null && !keySearch.isEmpty()) {
+      String regexPattern = ".*" + keySearch.trim() + ".*";
+      query.addCriteria(new Criteria().orOperator(
+          Criteria.where("name").regex(regexPattern, "i"),
+          Criteria.where("description").regex(regexPattern, "i")));
+    }
+
+    if (rate != null) {
+      query.addCriteria(new Criteria().orOperator(
+          Criteria.where("ratingAvg").gte(rate),
+          Criteria.where("ratingAvg").is(Double.parseDouble("0"))));
+    }
 
     if (shopId != null && !shopId.isEmpty()) {
       System.out.println("shopId:::::" + shopId);
@@ -179,11 +202,36 @@ public class ProductService {
       query.addCriteria(Criteria.where("state").is(params.getState()));
     }
 
-    if (categoryId != null && !categoryId.isEmpty()) {
+    // if (categoryId != null && !categoryId.isEmpty()) {
+    // // Tìm kiếm theo categoryId trong cả category.id và category.parentIds
+    // query.addCriteria(new Criteria().orOperator(
+    // Criteria.where("category.id").is(categoryId),
+    // Criteria.where("category.parentIds").in(categoryId)));
+    // }
 
-      query.addCriteria(new Criteria().orOperator(Criteria.where("category.id").is(categoryId),
-          Criteria.where("category.parentIds").in(categoryId)));
+    if (categoryId != null && !categoryId.isEmpty()) {
+      // Tìm tất cả các Category có id hoặc parentId giống với categoryId truyền vào
+      // List<Category> categories = cateRepo.findByIdOrParentId(categoryId);
+      List<Category> categories = findAllSubCategories(categoryId);
+
+      categories.stream().forEach(System.out::println);
+
+      // Lấy danh sách id của các Category tìm được chuyển sang objectId
+      List<ObjectId> objectIds = categories.stream()
+          .map(Category::getId)
+          .filter(ObjectId::isValid)
+          .map(ObjectId::new)
+          .collect(Collectors.toList());
+      // Tìm tất cả các Product có categoryId nằm trong danh sách id của Category
+      query.addCriteria(Criteria.where("category.$id").in(objectIds));
     }
+
+    if (minPrice != null && maxPrice != null)
+      query.addCriteria(Criteria.where("price").gte(minPrice).lte(maxPrice));
+    else if (minPrice != null)
+      query.addCriteria(Criteria.where("price").gte(minPrice));
+    else if (maxPrice != null)
+      query.addCriteria(Criteria.where("price").lte(maxPrice));
 
     // get total product
     Long total = productRepo.count();
@@ -192,16 +240,17 @@ public class ProductService {
     query.with(pageable);
     List<Product> list = mongoTemplate.find(query, Product.class);
 
-    // List<Variant> variants = variantRepo.findAll();
-    // variants.forEach(v -> {
-    // v.setSold(0);
-    // variantRepo.save(v);
-    // });
-
-    // List<Variant> variants_ok = variantRepo.findAll();
-
     // list.forEach(product -> {
-    // iUpdateProduct.inventory(product);
+
+    // Double minPriceSale = product.getVariants().stream()
+    // .map(Variant::getPriceSale)
+    // .filter(Objects::nonNull) // Loại bỏ giá null nếu có
+    // .min(Double::compareTo)
+    // .orElse(null);
+    // if (minPriceSale != null) {
+    // product.setPrice(minPriceSale); // Cập nhật thuộc tính price của sản phẩm
+    // productRepo.save(product);
+    // }
     // });
 
     System.out.println("ccc" + list.size());
@@ -313,6 +362,25 @@ public class ProductService {
     long countSold = products.stream().mapToLong(Product::getSold).sum();
 
     return Arrays.asList(countProduct, countVariant, countSold);
+  }
+
+  private List<Category> findAllSubCategories(String categoryId) {
+    List<Category> allCategories = new ArrayList<>();
+    findAllSubCategoriesHelper(categoryId, allCategories);
+    return allCategories;
+  }
+
+  private void findAllSubCategoriesHelper(String categoryId, List<Category> allCategories) {
+    Optional<Category> categoryOpt = cateRepo.findById(categoryId);
+    if (categoryOpt.isPresent()) {
+      Category category = categoryOpt.get();
+      allCategories.add(category);
+    }
+    List<Category> subCategories = cateRepo.findByParentIds(categoryId);
+    allCategories.addAll(subCategories);
+    for (Category subCategory : subCategories) {
+      findAllSubCategoriesHelper(subCategory.getId(), allCategories);
+    }
   }
 
 }

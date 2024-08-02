@@ -17,4 +17,10 @@ public class ProductParamsReq {
   private String state;
 
   private String shopId;
+
+  private Double minPrice;
+
+  private Double maxPrice;
+
+  private Double rate;
 }

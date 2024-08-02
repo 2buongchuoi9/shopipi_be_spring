@@ -24,6 +24,8 @@ public class Notification {
 
   private String content;
 
+  private String description;
+
   private String userTo;
 
   private User userFrom;

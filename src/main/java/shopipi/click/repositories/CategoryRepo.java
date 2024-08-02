@@ -20,4 +20,6 @@ public interface CategoryRepo extends MongoRepository<Category, String> {
 
   // Tìm tất cả danh mục có chứa ID cha trong danh sách parentIds
   List<Category> findAllByParentIdsContaining(String parentId);
+
+  List<Category> findByParentIds(String categoryId);
 }

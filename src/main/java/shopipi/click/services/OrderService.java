@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.springframework.cglib.core.Local;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,9 +19,12 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import shopipi.click.applicationEvent.OrderChangeStateEvent;
+import shopipi.click.applicationEvent.OrderEvent;
 import shopipi.click.configs.WebMvcConfig;
 import shopipi.click.entity.Cart;
 import shopipi.click.entity.Discount;
+import shopipi.click.entity.Notification;
 import shopipi.click.entity.Order;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Variant;
@@ -51,6 +55,7 @@ public class OrderService {
   private final IUpdateProduct iUpdateProduct;
   private final VariantRepo variationRepo;
   private final MongoTemplate mongoTemplate;
+  private final ApplicationEventPublisher eventPublisher;
 
   public Order checkoutReview(User user, OrderReq orderReq) {
 
@@ -130,6 +135,9 @@ public class OrderService {
                 + "content: " + orderReq.getNote()))
         .build());
 
+    // important
+    eventPublisher.publishEvent(new OrderEvent(this, order));
+
     // remove product in cart and set quantity in productAttribute
     order.getItems().stream()
         .forEach(shopOrderItem -> {
@@ -182,6 +190,14 @@ public class OrderService {
     foundOrder.addNotes("Change state by shop date:"
         + LocalDateTime.now().format(DateTimeFormatter.ofPattern(WebMvcConfig.dateTimeFormat))
         + "content: " + note);
+
+    eventPublisher.publishEvent(new OrderChangeStateEvent(this,
+        Notification.builder()
+            .userFrom(null)
+            .userTo(foundOrder.getUser().getId())
+            .content(getContentByChangeState(state))
+            .build()));
+
     return orderRepo.save(foundOrder);
   }
 
@@ -249,5 +265,21 @@ public class OrderService {
   // orderRepo.delete(order);
   // }
   // }
+
+  private String getContentByChangeState(String state) {
+
+    if (state.equalsIgnoreCase(StateOrderEnum.PENDING.name()))
+      return "Đơn hàng của bạn đã được đặt";
+    if (state.equalsIgnoreCase(StateOrderEnum.CANCELLED.name()))
+      return "Đơn hàng của bạn đã bị hủy";
+    if (state.equalsIgnoreCase(StateOrderEnum.CONFIRMED.name()))
+      return "Đơn hàng của bạn đã được shop xác nhận";
+    if (state.equalsIgnoreCase(StateOrderEnum.SHIPPING.name()))
+      return "Đơn hàng của bạn đã được giao cho đơn vị vận chuyển";
+    if (state.equalsIgnoreCase(StateOrderEnum.DELIVERED.name()))
+      return "Đơn hàng của bạn đã được giao thành công";
+
+    return "Đơn hàng của bạn đã được thay đổi trạng thái";
+  }
 
 }

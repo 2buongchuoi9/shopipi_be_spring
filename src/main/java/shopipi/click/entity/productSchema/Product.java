@@ -68,6 +68,9 @@ public class Product {
   @DBRef
   private Category category;
 
+  @Default
+  private Double price = 0.0;
+
   // Quản lý trạng thái sản phẩm (PENDING, ACTIVE, DEACTIVE)
   @Default
   private String state = ProductState.PENDING.name();

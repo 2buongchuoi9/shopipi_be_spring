@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Builder.Default;
 import shopipi.click.utils._enum.AuthTypeEnum;
 
 @Data
@@ -16,7 +17,8 @@ public class UserParamReq {
   private Boolean status;
   private String authType;
   private Boolean verify;
-  private String role;
+  @Default
+  private String role = "USER";
 
   @AssertTrue(message = "The authType must match the pattern")
   private boolean isValidAuthType() {

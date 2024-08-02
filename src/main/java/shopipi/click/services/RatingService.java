@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import shopipi.click.applicationEvent.LikeEvent;
+import shopipi.click.applicationEvent.RatingEvent;
 import shopipi.click.entity.Comment;
 import shopipi.click.entity.Image;
+import shopipi.click.entity.Notification;
 import shopipi.click.entity.Rating;
 import shopipi.click.entity.User;
 import shopipi.click.entity.productSchema.Product;
@@ -31,6 +35,7 @@ import shopipi.click.repositories.ProductRepo;
 import shopipi.click.repositories.RatingRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
 import shopipi.click.services.productService.IUpdateProduct;
+import shopipi.click.utils._enum.NotificationType;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class RatingService {
   private final IUpdateProduct iUpdateProduct;
   private final MongoTemplate mongoTemplate;
   private final ImageService fileService;
+  private final ApplicationEventPublisher eventPublisher;
 
   public Rating addRating(User user, RatingReq ratingReq) {
 
@@ -86,6 +92,8 @@ public class RatingService {
 
     if (!ratingReq.getIsComment())
       iUpdateProduct.afterAddRating(foundProduct, rating.getValue());
+
+    eventPublisher.publishEvent(new RatingEvent(this, rating));
 
     return rating;
   }
@@ -176,6 +184,14 @@ public class RatingService {
       rating.getLikes().remove(user.getId());
     } else {
       rating.getLikes().add(user.getId());
+
+      eventPublisher.publishEvent(new LikeEvent(this, Notification.builder()
+          .userFrom(user)
+          .userTo(rating.getUser().getId())
+          .description(rating.getProductId())
+          .content(user.getName() + " đã thích " + (rating.getIsComment() ? "bình luận" : "đánh giá") + " của bạn")
+          .notificationType(NotificationType.NEW_LIKE)
+          .build()));
     }
 
     return ratingRepo.save(rating);

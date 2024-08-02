@@ -132,38 +132,47 @@ public class UserService {
 
     Query query = new Query();
 
+    // Kiểm tra và thêm điều kiện keySearch
     if (keySearch != null && !keySearch.isEmpty()) {
-      String regexPattern = ".*" + keySearch.trim() + ".*"; // Thêm ?i để không phân biệt chữ hoa chữ thường
+      String regexPattern = ".*" + keySearch.trim() + ".*";
       query.addCriteria(new Criteria().orOperator(
           Criteria.where("name").regex(regexPattern, "i"),
           Criteria.where("email").regex(regexPattern, "i")));
-
-      query.addCriteria(Criteria.where("roles").ne(UserRoleEnum.MOD));
     }
 
-    if (status != null)
+    // Kiểm tra và thêm điều kiện status
+    if (status != null) {
       query.addCriteria(Criteria.where("status").is(status));
-
-    if (verify != null)
-      query.addCriteria(Criteria.where("verify").is(verify));
-
-    if (authType != null)
-      query.addCriteria(Criteria.where("authType").is(authType));
-
-    if (role != null && !role.isEmpty()) {
-      query.addCriteria(
-          new Criteria().andOperator(
-              Criteria.where("roles").in(UserRoleEnum.valueOf(role)),
-              Criteria.where("roles").ne(UserRoleEnum.ADMIN)));
-
     }
+
+    // Kiểm tra và thêm điều kiện verify
+    if (verify != null) {
+      query.addCriteria(Criteria.where("verify").is(verify));
+    }
+
+    // Kiểm tra và thêm điều kiện authType
+    if (authType != null) {
+      query.addCriteria(Criteria.where("authType").is(authType));
+    }
+
+    // Kiểm tra và thêm điều kiện role
+    if (role != null && !role.isEmpty()) {
+      // query.addCriteria(new Criteria().andOperator(
+      // Criteria.where("roles").in(role),
+      // Criteria.where("roles").ne(UserRoleEnum.ADMIN)));
+      query.addCriteria(Criteria.where("roles").in(role));
+      // query.addCriteria(Criteria.where("roles").ne(UserRoleEnum.ADMIN));
+    }
+
+    // Thêm điều kiện roles không phải MOD
+    // query.addCriteria(Criteria.where("roles").ne(UserRoleEnum.MOD));
 
     query.with(pageable);
 
     List<User> list = mongoTemplate.find(query, User.class);
     long total = mongoTemplate.count(query, User.class);
 
-    return new PageCustom<User>(PageableExecutionUtils.getPage(list, pageable, () -> total));
+    return new PageCustom<>(PageableExecutionUtils.getPage(list, pageable, () -> total));
   }
 
   public User createUserMod(String ipAddress) {
@@ -232,16 +241,16 @@ public class UserService {
       foundShop.getFollowers().remove(user.getId());
     } else {
       foundShop.getFollowers().add(user.getId());
+
+      eventPublisher.publishEvent(new FollowEvent(this, Notification.builder()
+          .userFrom(user)
+          .userTo(foundShop.getId())
+          .content(user.getName() + " đã theo dõi bạn")
+          .notificationType(NotificationType.NEW_FOLLOW)
+          .build()));
     }
 
     userRepo.save(foundShop);
-
-    eventPublisher.publishEvent(new FollowEvent(this, Notification.builder()
-        .userFrom(user)
-        .userTo(foundShop.getId())
-        .content(user.getName() + " đã theo dõi bạn")
-        .notificationType(NotificationType.NEW_FOLLOW)
-        .build()));
 
     return true;
 
