@@ -6,6 +6,8 @@ target/
 
 *.properties
 
+src/main/resources/application.properties
+
 testChat/
 
 ### STS ###

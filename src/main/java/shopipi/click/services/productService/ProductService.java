@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.Category;
+import shopipi.click.entity.Inventory;
 import shopipi.click.entity.productSchema.Attribute;
 import shopipi.click.entity.productSchema.Product;
 import shopipi.click.entity.productSchema.Variant;
@@ -45,6 +46,7 @@ import shopipi.click.models.request.AttributeReq;
 import shopipi.click.models.request.ProductReq;
 import shopipi.click.models.request.UpdateToggleReq;
 import shopipi.click.repositories.CategoryRepo;
+import shopipi.click.repositories.InventoryRepo;
 import shopipi.click.repositories.ProductRepo;
 import shopipi.click.repositories.VariantRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
@@ -59,6 +61,7 @@ public class ProductService {
   private final MongoTemplate mongoTemplate;
   private final IUpdateProduct iUpdateProduct;
   private final VariantRepo variantRepo;
+  private final InventoryRepo inventoryRepo;
 
   public Product addProduct(ProductReq productReq) {
 
@@ -337,6 +340,8 @@ public class ProductService {
       mongoTemplate.remove(new Query(Criteria.where("productId").is(id)), Variant.class);
 
       // xóa lịch sử nhập hàng
+      mongoTemplate.remove(new Query(Criteria.where("productId").is(id)), Inventory.class);
+
       productRepo.delete(product);
       return true;
     } catch (Exception e) {

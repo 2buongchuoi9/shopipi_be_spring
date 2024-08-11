@@ -37,11 +37,17 @@ public class ImplUpdateProduct implements IUpdateProduct {
     int quantity = variants.stream().mapToInt(Variant::getQuantity).sum();
     int sold = variants.stream().mapToInt(Variant::getSold).sum();
 
+    // Tính toán giá trung bình của product từ tất cả các variant
+    double averagePrice = variants.stream()
+        .mapToDouble(Variant::getPrice)
+        .average()
+        .orElse(0.0);
     // get all valueVariant of product and sum quantity
 
     product.setSold(sold);
     product.setQuantity(quantity);
     product.setVariants(variants);
+    product.setPrice(averagePrice);
     return productRepo.save(product);
   }
 

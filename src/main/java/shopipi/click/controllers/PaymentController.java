@@ -149,8 +149,20 @@ public class PaymentController {
 
     // giao dich that bai xoa order va tra lai du lieu cua product & discount
     if (cc.equals("00") && cc.equals("07")) {
-      // orderService.removeOrderAndReturnProductQuantityBecausePaymentFail(parts[1]);
-      return ResponseEntity.ok().body(new MainResponse<>(HttpStatus.PAYMENT_REQUIRED, mes));
+      var ids = parts[1].split(",");
+
+      for (int i = 0; i < ids.length; i++) {
+        var a = ids[i].trim();
+        orderService.removeOrderAndReturnProductQuantityBecausePaymentFail(a);
+      }
+      // return ResponseEntity.ok().body(new
+      // MainResponse<>(HttpStatus.PAYMENT_REQUIRED, mes));
+      UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(parts[0])
+          // .queryParam("orderId", parts[1])
+          .queryParam("code", cc)
+          .queryParam("message", mes);
+
+      return new RedirectView(builder.toUriString());
     }
 
     // return ResponseEntity.ok().body(MainResponse.oke(mes,
@@ -158,6 +170,7 @@ public class PaymentController {
 
     UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(parts[0])
         .queryParam("orderId", parts[1])
+        .queryParam("code", "200")
         .queryParam("message", mes);
 
     return new RedirectView(builder.toUriString());
@@ -168,13 +181,29 @@ public class PaymentController {
       @RequestParam(value = "orderInfo") String orderInfo,
       @RequestParam(value = "message") String message)
       throws JsonMappingException, JsonProcessingException {
+
+    String[] parts = orderInfo.split("\\?orderId=");
+
     // giao dich that bai xoa order va tra lai du lieu cua product & discount
     if (resultCode != 0) {
-      // orderService.removeOrderAndReturnProductQuantityBecausePaymentFail(parts[1]);
-      return ResponseEntity.ok()
-          .body(new MainResponse<>(HttpStatus.PAYMENT_REQUIRED, message + " code: " + resultCode));
+      var ids = parts[1].split(",");
+
+      for (int i = 0; i < ids.length; i++) {
+        var a = ids[i].trim();
+        orderService.removeOrderAndReturnProductQuantityBecausePaymentFail(a);
+      }
+
+      // return ResponseEntity.ok()
+      // .body(new MainResponse<>(HttpStatus.PAYMENT_REQUIRED, message + " code: " +
+      // resultCode));
+
+      UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(parts[0])
+          // .queryParam("orderId", parts[1])
+          .queryParam("code", resultCode + "")
+          .queryParam("message", message);
+
+      return new RedirectView(builder.toUriString());
     }
-    String[] parts = orderInfo.split("\\?orderId=");
 
     UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(parts[0])
         .queryParam("orderId", parts[1])

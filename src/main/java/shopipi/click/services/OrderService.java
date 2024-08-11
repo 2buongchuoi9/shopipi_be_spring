@@ -161,6 +161,38 @@ public class OrderService {
     return order;
   }
 
+  // viết hàm xóa order và cập nhật tất cả:
+  // số lượng của biến thể, số lượng đã bán của sản phẩm
+  public void removeOrderAndReturnProductQuantityBecausePaymentFail(String orderId) {
+    // Tìm đơn hàng theo ID
+    Order order = orderRepo.findById(orderId)
+        .orElseThrow(() -> new NotFoundError("Order not found"));
+
+    // Duyệt qua từng shop order item trong đơn hàng
+    order.getItems().forEach(shopOrderItem -> {
+      // Duyệt qua từng product item trong shop order item
+      shopOrderItem.getItems().forEach(item -> {
+        // Khôi phục lại số lượng của biến thể sản phẩm
+        Variant variant = item.getVariant();
+        variant.setQuantity(variant.getQuantity() + item.getQuantity());
+
+        // Khôi phục lại số lượng đã bán của biến thể sản phẩm
+        if (variant.getSold() != null) {
+          variant.setSold(variant.getSold() - item.getQuantity());
+        }
+
+        // Lưu lại biến thể sản phẩm
+        variationRepo.save(variant);
+
+        // Cập nhật thông tin sản phẩm tổng thể
+        iUpdateProduct.inventory(item.getProduct());
+      });
+    });
+
+    // Xóa đơn hàng khỏi cơ sở dữ liệu
+    orderRepo.delete(order);
+  }
+
   public List<Order> orderByUser(User user, OrderReq orderReq) {
 
     List<OrderReq> listOrderRequests = orderReq.getShopOrderItems().stream()
@@ -224,6 +256,14 @@ public class OrderService {
 
     if (params.getUserId() != null && !params.getUserId().isEmpty())
       query.addCriteria(Criteria.where("user.id").is(params.getUserId()));
+
+    if (params.getStartDate() != null && params.getEndDate() != null) {
+      query.addCriteria(Criteria.where("createdAt").gte(params.getStartDate()).lte(params.getEndDate()));
+    } else if (params.getStartDate() != null) {
+      query.addCriteria(Criteria.where("createdAt").gte(params.getStartDate()));
+    } else if (params.getEndDate() != null) {
+      query.addCriteria(Criteria.where("createdAt").lte(params.getEndDate()));
+    }
 
     long total = mongoTemplate.count(query, Order.class);
     List<Order> list = mongoTemplate.find(query, Order.class);
