@@ -1,11 +1,10 @@
 package shopipi.click.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,7 @@ public class CategoryService {
   private final ProductRepo productRepo;
 
   // [0,1,2] -> 0: parent, 1: parent of parent, 2: parent of parent of parent
+  @CacheEvict(value = "categories", allEntries = true)
   public Category addCategory(Category cateReq) {
 
     if (cateReq.getParentIds() == null || cateReq.getParentIds().isEmpty() || cateReq.getParentIds().size() == 0)
@@ -41,6 +41,7 @@ public class CategoryService {
 
   // chỉ update name, thumb, slug
   // không update parentIds
+  @CacheEvict(value = "categories", allEntries = true)
   public Category updateCategory(String id, Category cateReq) {
 
     // check id
@@ -73,14 +74,17 @@ public class CategoryService {
     return cateRepo.save(foundCate);
   }
 
+  @Cacheable(value = "categories", key = "#root.methodName")
   public List<Category> findAll() {
     return cateRepo.findAll();
   }
 
-  public Category findBySlug() {
-    return cateRepo.findBySlug();
+  @Cacheable(value = "categories", key = "#root.methodName + '_' + #slug")
+  public Category findBySlug(String slug) {
+    return cateRepo.findBySlug(slug).orElseThrow(() -> new NotFoundError("slug", slug));
   }
 
+  @CacheEvict(value = "categories", allEntries = true)
   public Boolean deleteCategory(String id) {
     // check if exits child category
     Category foundCate = cateRepo.findById(id).orElseThrow(() -> new NotFoundError("id", id));

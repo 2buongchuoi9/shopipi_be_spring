@@ -1,5 +1,6 @@
 package shopipi.click.repositories.repositoryUtil;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -8,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import lombok.Getter;
 
 @Getter
-public class PageCustom<T> {
+public class PageCustom<T> implements Serializable {
   private List<T> content;
   private int totalPage;
   private int currentPage;

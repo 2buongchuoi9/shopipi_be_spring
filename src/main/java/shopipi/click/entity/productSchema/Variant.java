@@ -1,5 +1,6 @@
 package shopipi.click.entity.productSchema;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -14,7 +15,7 @@ import shopipi.click.entity.productSchema.Attribute.ObjectMap;
 @Data
 @Builder
 @Document(collection = "Variants")
-public class Variant {
+public class Variant implements Serializable {
   @Id
   private String id;
   private String productId;

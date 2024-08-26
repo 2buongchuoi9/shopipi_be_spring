@@ -1,5 +1,6 @@
 package shopipi.click.models.paramsRequest;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ import shopipi.click.utils._enum.AuthTypeEnum;
 
 @Data
 @Builder
-public class UserParamReq {
+public class UserParamReq implements Serializable {
 
   private String keySearch;
   private Boolean status;

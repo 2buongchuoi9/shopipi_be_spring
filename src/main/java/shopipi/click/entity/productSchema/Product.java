@@ -1,5 +1,6 @@
 package shopipi.click.entity.productSchema;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Product implements Serializable {
   @Id
   private String id;
   private String name;

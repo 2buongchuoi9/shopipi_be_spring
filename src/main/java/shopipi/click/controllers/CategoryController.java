@@ -46,10 +46,10 @@ public class CategoryController {
     return ResponseEntity.ok().body(MainResponse.oke(cateService.findAll()));
   }
 
-  @Operation(summary = "get all category")
+  @Operation(summary = "find by slug category")
   @GetMapping("/{slug}")
   public ResponseEntity<MainResponse<Category>> findBySug(@PathVariable String slug) {
-    return ResponseEntity.ok().body(MainResponse.oke(cateService.findBySlug()));
+    return ResponseEntity.ok().body(MainResponse.oke(cateService.findBySlug(slug)));
   }
 
   @Operation(summary = "get all category")

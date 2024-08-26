@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProductParamsReq {
+public class ProductParamsReq implements Serializable {
   private String keySearch;
 
   private String categoryId;

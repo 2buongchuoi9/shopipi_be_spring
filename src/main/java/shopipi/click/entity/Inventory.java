@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import shopipi.click.configs.WebMvcConfig;
 @Document(collection = "Inventory")
 @Data
 @Builder
-public class Inventory {
+public class Inventory implements Serializable {
   @Id
   private String id;
   @NotEmpty(message = "shopId is required")
@@ -40,7 +41,7 @@ public class Inventory {
 
   @Data
   @Builder
-  public static class VariantInventory {
+  public static class VariantInventory implements Serializable {
     @NotEmpty(message = "variantId is required")
     private String variantId;
     @NotEmpty(message = "variantName is required")

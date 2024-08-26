@@ -1,5 +1,6 @@
 package shopipi.click.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import shopipi.click.entity.productSchema.Variant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "Products")
-public class ProductDTO {
+public class ProductDTO implements Serializable {
   @Id
   private String id;
   private String name;

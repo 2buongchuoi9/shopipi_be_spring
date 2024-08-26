@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -47,6 +48,7 @@ public class RatingService {
   private final ImageService fileService;
   private final ApplicationEventPublisher eventPublisher;
 
+  @CacheEvict(value = "product", allEntries = true)
   public Rating addRating(User user, RatingReq ratingReq) {
 
     Product foundProduct = productRepo.findById(ratingReq.getProductId())
@@ -98,6 +100,7 @@ public class RatingService {
     return rating;
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public Rating updateRating(String id, User user, RatingReq ratingReq) {
 
     Rating foundRating = ratingRepo.findById(id)
@@ -123,6 +126,7 @@ public class RatingService {
     return foundRating;
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public void deleteRating(String ratingId) {
     Rating foundRating = ratingRepo.findById(ratingId)
         .orElseThrow(() -> new NotFoundError("ratingId", ratingId));

@@ -1,5 +1,6 @@
 package shopipi.click.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import shopipi.click.entity.productSchema.Variant;
 
 @Data
 @Builder
-public class ShopOrderItemsModel {
+public class ShopOrderItemsModel implements Serializable {
   private String shopId;
   private String discountId;
   @Default
@@ -24,7 +25,7 @@ public class ShopOrderItemsModel {
 
   @Data
   @Builder
-  public static class ProductItemsModel {
+  public static class ProductItemsModel implements Serializable {
     private Product product;
     private Variant variant;
     private Integer quantity;

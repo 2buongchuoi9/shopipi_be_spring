@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -32,6 +33,7 @@ public class SaleService {
   private final IUpdateProduct updateProduct;
   private final MongoTemplate mongoTemplate;
 
+  @CacheEvict(value = "product", allEntries = true)
   public Sale addSale(SaleReq saleReq) {
 
     List<Product> products = productRepo.findAllById(saleReq.getProductIds());
@@ -67,6 +69,7 @@ public class SaleService {
     return saleSave;
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public Sale updateSale(String id, SaleReq saleReq) {
     Sale foundSale = saleRepo.findById(id).orElseThrow(() -> new NotFoundError(id, "Sale"));
 
@@ -114,6 +117,7 @@ public class SaleService {
     return saleSave;
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public boolean deleteSale(String id) {
     Sale foundSale = saleRepo.findById(id).orElseThrow(() -> new NotFoundError(id, "Sale"));
 

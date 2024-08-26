@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import lombok.Builder.Default;
 @Document(collection = "Categories")
 @Data
 @Builder
-public class Category {
+public class Category implements Serializable {
   @Id
   private String id;
 

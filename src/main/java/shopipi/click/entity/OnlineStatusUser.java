@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -15,7 +16,7 @@ import shopipi.click.configs.WebMvcConfig;
 @Document(collection = "OnlineStatusUsers")
 @Data
 @Builder
-public class OnlineStatusUser {
+public class OnlineStatusUser implements Serializable {
   @Id
   private String id;
 

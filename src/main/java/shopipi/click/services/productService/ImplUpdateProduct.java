@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.Inventory;
 import shopipi.click.entity.Sale;
-import shopipi.click.entity.productSchema.Attribute;
 import shopipi.click.entity.productSchema.Product;
 import shopipi.click.entity.productSchema.Variant;
 import shopipi.click.repositories.CommentRepo;

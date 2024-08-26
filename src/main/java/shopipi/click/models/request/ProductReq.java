@@ -1,7 +1,7 @@
 package shopipi.click.models.request;
 
 import java.util.List;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ import shopipi.click.utils._enum.ProductTypeEnum;
 @AllArgsConstructor
 // @NoArgsConstructor
 // @AttributeElectronic
-public class ProductReq {
+public class ProductReq implements Serializable {
 
   @NotEmpty(message = "Name is required")
   private String name;

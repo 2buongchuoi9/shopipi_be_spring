@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private HandlerExceptionResolver exceptionResolver;
 
   final private List<String> list = Arrays.asList(
+      "/ws",
       "/api/auth",
       "/api/cart/add-to-cart/by-user-mod/",
       "/api/order/checkout-review-guest/",

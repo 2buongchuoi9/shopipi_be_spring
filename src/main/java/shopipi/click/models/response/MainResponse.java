@@ -1,5 +1,7 @@
 package shopipi.click.models.response;
 
+import java.io.Serializable;
+
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MainResponse<T extends Object> {
+public class MainResponse<T extends Object> implements Serializable {
   private int code;
   private HttpStatus status;
   private String message;

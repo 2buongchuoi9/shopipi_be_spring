@@ -1,5 +1,6 @@
 package shopipi.click.entity.productSchema;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -9,9 +10,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@SuppressWarnings("unused")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AttributeElectronic extends Attribute {
+public class AttributeElectronic extends Attribute implements Serializable {
   private String manufacturer; // nha may san xuat
   private String model;
   private String type; // loai san pham (laptop, smartphone, tablet, smartwatch, ...)

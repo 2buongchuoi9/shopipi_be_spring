@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -18,7 +19,7 @@ import shopipi.click.utils._enum.NotificationType;
 @Document(collection = "Notifications")
 @Data
 @Builder
-public class Notification {
+public class Notification implements Serializable {
   @Id
   private String id;
 

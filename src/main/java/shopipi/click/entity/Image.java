@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -22,7 +23,7 @@ import shopipi.click.utils._enum.FileTypeEnum;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Image {
+public class Image implements Serializable {
 
   private String id;
   private String publicId;

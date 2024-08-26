@@ -2,6 +2,7 @@ package shopipi.click.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,6 +29,7 @@ public class InventoryService {
   private final MongoTemplate mongoTemplate;
 
   // nhập hàng
+  @CacheEvict(value = "product", allEntries = true)
   public Product addInventory(Inventory inventory) {
 
     Product product = productRepo.findById(inventory.getProductId())

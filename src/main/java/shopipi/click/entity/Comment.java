@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import shopipi.click.configs.WebMvcConfig;
 @CompoundIndex(def = "{'productId': 1, 'shopId': 1 , 'left': 1, 'right': 1, 'parentId': 1, 'user': 1, 'isDelete': 1}")
 @Data
 @Builder
-public class Comment {
+public class Comment implements Serializable {
   @Id
   private String id;
   private String productId;

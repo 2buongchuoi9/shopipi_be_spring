@@ -1,5 +1,6 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import shopipi.click.utils._enum.TypeDiscount;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaleReq {
+public class SaleReq implements Serializable {
   private String name;
   @NotEmpty(message = "shopId is required")
   private String shopId;

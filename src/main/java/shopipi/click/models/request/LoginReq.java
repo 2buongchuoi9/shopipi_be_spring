@@ -1,5 +1,7 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -9,7 +11,7 @@ import shopipi.click.configs.WebMvcConfig;
 
 @Data
 @Builder
-public class LoginReq {
+public class LoginReq implements Serializable {
   @NotEmpty(message = "Email is required")
   @Pattern(regexp = WebMvcConfig.regexpEmail, message = "Invalid email format")
   private String email;

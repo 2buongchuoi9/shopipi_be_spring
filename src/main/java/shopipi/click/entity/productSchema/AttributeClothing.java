@@ -1,18 +1,15 @@
 package shopipi.click.entity.productSchema;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@SuppressWarnings("unused")
 @Data
 @EqualsAndHashCode(callSuper = true) // This annotation is used to generate
 // equals and hashcode methods in the class
-public class AttributeClothing extends Attribute {
+public class AttributeClothing extends Attribute implements Serializable {
   private String material; // chat lieu
   private String model; // chat lieu
   private String season; // mùa (đông, hè, xuân, thu)

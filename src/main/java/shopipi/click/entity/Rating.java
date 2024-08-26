@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import shopipi.click.configs.WebMvcConfig;
 @Document(collection = "Ratings")
 @Data
 @Builder
-public class Rating {
+public class Rating implements Serializable {
   @Id
   private String id;
   private String productId;

@@ -236,20 +236,18 @@
 				spring-boot-starter-webflux
 			</artifactId>
 		</dependency>
-		<!--
-		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
 		<dependency>
-		<groupId>
-		org.springframework.boot
-		</groupId>
-		<artifactId>
-		spring-boot-starter-data-redis
-		</artifactId>
-		<version>
-		3.2.5
-		</version>
+			<groupId>
+				org.springframework.boot
+			</groupId>
+			<artifactId>
+				spring-boot-starter-data-redis
+			</artifactId>
+			<version>
+				3.2.5
+			</version>
 		</dependency>
-		-->
 		<dependency>
 			<groupId>
 				org.springframework.boot

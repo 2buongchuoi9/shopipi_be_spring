@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -26,7 +27,7 @@ import shopipi.click.utils._enum.UserRoleEnum;
 @Document(collection = "Users")
 @Data
 @Builder
-public class User {
+public class User implements Serializable {
   @Id
   private String id;
   private String name;

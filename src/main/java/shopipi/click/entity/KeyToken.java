@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -11,7 +12,7 @@ import lombok.Data;
 @Document(collection = "KeyTokens")
 @Data
 @Builder
-public class KeyToken {
+public class KeyToken implements Serializable {
   @Id
   private String id;
 

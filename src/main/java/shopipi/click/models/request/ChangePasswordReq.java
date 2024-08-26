@@ -1,5 +1,7 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
@@ -7,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChangePasswordReq {
+public class ChangePasswordReq implements Serializable {
 
   @NotEmpty(message = "password not null or empty")
   private String password;

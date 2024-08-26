@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import shopipi.click.utils._enum.TypeDiscount;
 @Document(collection = "Discounts")
 @Data
 @Builder
-public class Discount {
+public class Discount implements Serializable {
   @Id
   private String id;
   @CreatedBy

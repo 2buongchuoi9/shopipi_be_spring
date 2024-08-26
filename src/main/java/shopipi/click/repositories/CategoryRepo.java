@@ -1,6 +1,7 @@
 package shopipi.click.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -16,7 +17,7 @@ public interface CategoryRepo extends MongoRepository<Category, String> {
 
   boolean existsByName(String name);
 
-  Category findBySlug();
+  Optional<Category> findBySlug(String slug);
 
   // Tìm tất cả danh mục có chứa ID cha trong danh sách parentIds
   List<Category> findAllByParentIdsContaining(String parentId);

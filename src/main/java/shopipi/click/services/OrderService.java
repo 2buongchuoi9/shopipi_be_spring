@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -117,6 +118,9 @@ public class OrderService {
         .build();
   }
 
+  // important event
+  // remove cache product
+  @CacheEvict(value = "product", allEntries = true)
   public Order orderByUser_OneShop(User user, OrderReq orderReq) {
     Order order = checkoutReview(user, orderReq);
 
@@ -163,6 +167,8 @@ public class OrderService {
 
   // viết hàm xóa order và cập nhật tất cả:
   // số lượng của biến thể, số lượng đã bán của sản phẩm
+  // important. Remove cache product
+  @CacheEvict(value = "product", allEntries = true)
   public void removeOrderAndReturnProductQuantityBecausePaymentFail(String orderId) {
     // Tìm đơn hàng theo ID
     Order order = orderRepo.findById(orderId)

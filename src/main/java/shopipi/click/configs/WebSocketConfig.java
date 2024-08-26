@@ -15,6 +15,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import lombok.RequiredArgsConstructor;
@@ -32,23 +33,23 @@ import shopipi.click.utils.Constants.HEADER;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  private final KeyTokenRepo keyRepo;
-  private final JwtService jwtService;
-  private final UserRootService userRootService;
+  // private final KeyTokenRepo keyRepo;
+  // private final JwtService jwtService;
+  // private final UserRootService userRootService;
 
-  @Bean
-  public ThreadPoolTaskScheduler taskScheduler() {
-    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-    taskScheduler.setPoolSize(1);
-    taskScheduler.setThreadNamePrefix("wss-heartbeat-thread-");
-    taskScheduler.initialize();
-    return taskScheduler;
-  }
+  // @Bean
+  // public ThreadPoolTaskScheduler taskScheduler() {
+  // ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+  // taskScheduler.setPoolSize(1);
+  // taskScheduler.setThreadNamePrefix("wss-heartbeat-thread-");
+  // taskScheduler.initialize();
+  // return taskScheduler;
+  // }
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
 
-    ThreadPoolTaskScheduler taskScheduler = taskScheduler();
+    // ThreadPoolTaskScheduler taskScheduler = taskScheduler();
 
     registry.setApplicationDestinationPrefixes("/app");
 
@@ -62,6 +63,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
+    registry.addEndpoint("/ws");
     registry.addEndpoint("/ws")
         .setAllowedOriginPatterns("*")
         .withSockJS();
@@ -119,6 +121,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     // }
     // });
+  }
+
+  @Override
+  public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+    registration.setSendTimeLimit(15_000);
+    registration.setSendBufferSizeLimit(512 * 1024);
+    registration.setMessageSizeLimit(128 * 1024);
+    // registration.setSubProtocolHandler(new DefaultSubProtocolHandler());
   }
 
 }

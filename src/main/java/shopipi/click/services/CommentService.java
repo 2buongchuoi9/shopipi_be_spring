@@ -3,6 +3,7 @@ package shopipi.click.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,7 @@ public class CommentService {
   final private IUpdateProduct iUpdateProduct;
   final private ApplicationEventPublisher eventPublisher;
 
+  @CacheEvict(value = "product", allEntries = true)
   public Comment add(CommentReq commentReq) {
     Product foundProduct = productRepo.findById(commentReq.getProductId())
         .orElseThrow(() -> new NotFoundError("productId", commentReq.getProductId()));

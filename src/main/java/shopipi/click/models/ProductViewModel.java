@@ -1,5 +1,6 @@
 package shopipi.click.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import shopipi.click.utils._enum.ProductState;
 
 @Data
 
-public class ProductViewModel {
+public class ProductViewModel implements Serializable {
 
   private String id;
   private String name;

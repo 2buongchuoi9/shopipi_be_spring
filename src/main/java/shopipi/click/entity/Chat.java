@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -18,7 +19,7 @@ import shopipi.click.utils._enum.ChatType;
 @Document(collection = "Chats")
 @Data
 @Builder
-public class Chat {
+public class Chat implements Serializable {
   @Id
   private String id;
   private String senderId;

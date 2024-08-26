@@ -1,5 +1,6 @@
 package shopipi.click.models.paramsRequest;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +13,7 @@ import shopipi.click.configs.WebMvcConfig;
 
 @Data
 @Builder
-public class OrderParamsReq {
+public class OrderParamsReq implements Serializable {
   private String userId;
   private String shopId;
   private String state;

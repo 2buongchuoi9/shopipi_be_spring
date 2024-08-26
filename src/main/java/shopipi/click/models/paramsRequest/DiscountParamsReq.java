@@ -1,11 +1,13 @@
 package shopipi.click.models.paramsRequest;
 
+import java.io.Serializable;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class DiscountParamsReq {
+public class DiscountParamsReq implements Serializable {
   private String shopId;
   private String keySearch;
 

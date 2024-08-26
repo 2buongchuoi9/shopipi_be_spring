@@ -1,5 +1,6 @@
 package shopipi.click.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import lombok.Data;
 @Document("Carts")
 @Data
 @Builder
-public class Cart {
+public class Cart implements Serializable {
   @Id
   private String id;
 

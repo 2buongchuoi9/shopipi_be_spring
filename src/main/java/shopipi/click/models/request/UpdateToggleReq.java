@@ -1,11 +1,10 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.modelmapper.internal.util.Lists;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +14,7 @@ import shopipi.click.utils._enum.ProductState;
 
 @Builder
 @Data
-public class UpdateToggleReq implements java.io.Serializable {
+public class UpdateToggleReq implements Serializable {
   @NotNull(message = "ids is required")
   private Set<String> ids;
   @NotNull(message = "isDeleted is required")

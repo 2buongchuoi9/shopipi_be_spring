@@ -5,25 +5,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
-import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
-import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -34,35 +25,30 @@ import lombok.RequiredArgsConstructor;
 import shopipi.click.entity.Category;
 import shopipi.click.entity.Inventory;
 import shopipi.click.entity.productSchema.Attribute;
-import shopipi.click.entity.productSchema.Product;
-import shopipi.click.entity.productSchema.Variant;
 import shopipi.click.entity.productSchema.Attribute.ListObjectMap;
 import shopipi.click.entity.productSchema.Attribute.ObjectMap;
+import shopipi.click.entity.productSchema.Product;
+import shopipi.click.entity.productSchema.Variant;
 import shopipi.click.exceptions.BabRequestError;
 import shopipi.click.exceptions.NotFoundError;
-import shopipi.click.models.ProductDTO;
 import shopipi.click.models.paramsRequest.ProductParamsReq;
-import shopipi.click.models.request.AttributeReq;
 import shopipi.click.models.request.ProductReq;
 import shopipi.click.models.request.UpdateToggleReq;
 import shopipi.click.repositories.CategoryRepo;
-import shopipi.click.repositories.InventoryRepo;
 import shopipi.click.repositories.ProductRepo;
 import shopipi.click.repositories.VariantRepo;
 import shopipi.click.repositories.repositoryUtil.PageCustom;
-import shopipi.click.utils._enum.ProductState;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-  private final ProductFactory productFactory;
   private final ProductRepo productRepo;
   private final CategoryRepo cateRepo;
   private final MongoTemplate mongoTemplate;
   private final IUpdateProduct iUpdateProduct;
   private final VariantRepo variantRepo;
-  private final InventoryRepo inventoryRepo;
 
+  @CacheEvict(value = "product", allEntries = true)
   public Product addProduct(ProductReq productReq) {
 
     // check found product
@@ -120,6 +106,7 @@ public class ProductService {
     return iUpdateProduct.inventory(product); // in inventory will save product
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public Product updateProduct(String productId, ProductReq productReq) {
     Product product = productRepo.findById(productId)
         .orElseThrow(() -> new BabRequestError("Product not found"));
@@ -173,6 +160,7 @@ public class ProductService {
     return iUpdateProduct.inventory(product);
   }
 
+  @Cacheable(value = "product", key = "#root.methodName + '-' + #params?.keySearch+ '-' + #params?.categoryId+ '-' + #params?.isDeleted+ '-' + #params?.state+ '-' + #params?.shopId+ '-' + #params?.minPrice+ '-' + #params?.maxPrice+ '-' + #params?.rate")
   public PageCustom<Product> findProduct(Pageable pageable, ProductParamsReq params) {
     String shopId = params.getShopId();
     String categoryId = params.getCategoryId();
@@ -303,18 +291,21 @@ public class ProductService {
     return true;
   }
 
+  @Cacheable(value = "product", key = "#slug")
   public Product findBySlug(String slug) {
     Product product = productRepo.findBySlug(slug).orElseThrow(() -> new BabRequestError("Product not found"));
 
     return product;
   }
 
+  @Cacheable(value = "product", key = "#id")
   public Product findById(String id) {
     Product product = productRepo.findById(id).orElseThrow(() -> new BabRequestError("Product not found"));
 
     return product;
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public Boolean updateManyState(UpdateToggleReq req) {
     req.getIds().forEach(id -> {
       // check exit all ids
@@ -332,6 +323,7 @@ public class ProductService {
     }
   }
 
+  @CacheEvict(value = "product", allEntries = true)
   public Boolean deleteProduct(String id) {
     Product product = productRepo.findById(id).orElseThrow(() -> new NotFoundError("id", id));
 

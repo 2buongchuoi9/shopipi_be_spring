@@ -1,5 +1,7 @@
 package shopipi.click.models.response;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +11,7 @@ import shopipi.click.entity.User;
 @Data
 @Builder
 @AllArgsConstructor
-public class LoginRes {
+public class LoginRes implements Serializable {
   private TokenStore Token;
   private User user;
 

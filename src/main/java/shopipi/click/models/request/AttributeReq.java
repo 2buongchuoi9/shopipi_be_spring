@@ -1,5 +1,6 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ import shopipi.click.utils._enum.ProductTypeEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 // @AttributeElectronic
-public class AttributeReq {
+public class AttributeReq implements Serializable {
 
   @NotEmpty(message = "type is required")
   private String type; // ProductTypeEnum.ELECTRONIC.name()

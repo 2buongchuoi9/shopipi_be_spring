@@ -1,5 +1,6 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -12,7 +13,7 @@ import shopipi.click.utils._enum.TypePayment;
 
 @Data
 @Builder
-public class OrderReq {
+public class OrderReq implements Serializable {
   @NotEmpty(message = "address not null")
   private String address;
   @Default

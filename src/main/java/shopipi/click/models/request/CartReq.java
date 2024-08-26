@@ -1,5 +1,7 @@
 package shopipi.click.models.request;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -8,7 +10,7 @@ import lombok.Builder.Default;
 
 @Data
 @Builder
-public class CartReq {
+public class CartReq implements Serializable {
   @NotEmpty(message = "productId is required")
   private String productId;
   @NotEmpty(message = "variantId is required")
