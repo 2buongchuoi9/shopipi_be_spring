@@ -160,7 +160,7 @@ public class ProductService {
     return iUpdateProduct.inventory(product);
   }
 
-  @Cacheable(value = "product", key = "#root.methodName + '-' + #params?.keySearch+ '-' + #params?.categoryId+ '-' + #params?.isDeleted+ '-' + #params?.state+ '-' + #params?.shopId+ '-' + #params?.minPrice+ '-' + #params?.maxPrice+ '-' + #params?.rate")
+  @Cacheable(value = "product", key = "#root.methodName + '-' + #params?.keySearch+ '-' + #params?.categoryId+ '-' + #params?.isDeleted+ '-' + #params?.state+ '-' + #params?.shopId+ '-' + #params?.minPrice+ '-' + #params?.maxPrice+ '-' + #params?.rate + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
   public PageCustom<Product> findProduct(Pageable pageable, ProductParamsReq params) {
     String shopId = params.getShopId();
     String categoryId = params.getCategoryId();
@@ -333,6 +333,8 @@ public class ProductService {
 
       // xóa lịch sử nhập hàng
       mongoTemplate.remove(new Query(Criteria.where("productId").is(id)), Inventory.class);
+
+      // cần xóa sản phẩm ra khỏi sale
 
       productRepo.delete(product);
       return true;

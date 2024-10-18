@@ -167,10 +167,10 @@ public class UserService {
     // Thêm điều kiện roles không phải MOD
     // query.addCriteria(Criteria.where("roles").ne(UserRoleEnum.MOD));
 
+    long total = mongoTemplate.count(query, User.class);
     query.with(pageable);
 
     List<User> list = mongoTemplate.find(query, User.class);
-    long total = mongoTemplate.count(query, User.class);
 
     return new PageCustom<>(PageableExecutionUtils.getPage(list, pageable, () -> total));
   }
